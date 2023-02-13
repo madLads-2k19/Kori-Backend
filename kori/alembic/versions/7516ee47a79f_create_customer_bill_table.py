@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column("delivery_charge", sa.Numeric(2), nullable=True),
         sa.Column("net_price", sa.Numeric(2), nullable=False),
         sa.Column("billed_at", sa.types.TIMESTAMP, nullable=False),
-        sa.ForeignKeyConstraint(("org_id",), ["organisation.id"]),
+        sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
         sa.ForeignKeyConstraint(("store_id",), ["store.id"]),
         sa.ForeignKeyConstraint(("user_id",), ["user.id"]),
     )

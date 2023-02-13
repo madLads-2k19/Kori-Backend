@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
         sa.Column("config_type", sa.String(255), nullable=False),
         sa.Column("value", sa.String(255), nullable=False),
-        sa.ForeignKeyConstraint(("org_id",), ["organisation.id"]),
+        sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 
 
