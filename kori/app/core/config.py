@@ -9,24 +9,24 @@ class Settings(BaseSettings):
         env_file = find_dotenv(usecwd=True)
         env_file_encoding = "utf-8"
 
-    server_host: str
-    server_port: int
+    SERVER_HOST: str
+    SERVER_PORT: int
 
     # Postgres DB
-    database_host: str
-    database_user: str
-    database_password: str
-    database_name: str
-    database_uri: Optional[str] = None
+    DATABASE_HOST: str
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str
+    DATABASE_NAME: str
+    DATABASE_URI: Optional[str] = None
 
-    @validator("database_uri")
+    @validator("DATABASE_URI")
     def construct_database_connection_uri(cls, v: Optional[str], values: dict[str, Any]) -> str | PostgresDsn:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
             scheme="postgresql",
-            host=values.get("database_host"),
-            user=values.get("database_user"),
-            password=values.get("database_password"),
-            path=f"/{values.get('database_name') or ''}",
+            host=values.get("DATABASE_HOST"),
+            user=values.get("DATABASE_USER"),
+            password=values.get("DATABASE_PASSWORD"),
+            path=f"/{values.get('DATABASE_NAME') or ''}",
         )

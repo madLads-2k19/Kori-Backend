@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("membership_points", sa.Integer(), default=0),
         sa.Column("address", sa.Text(), nullable=True),
         sa.Column("preferred_payment_method", sa.String(255), nullable=True),
-        sa.ForeignKeyConstraint(("org_id",), ["organisation.id"]),
+        sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 
 

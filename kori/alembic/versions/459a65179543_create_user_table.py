@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("email", sa.String(255), nullable=False),
         sa.Column("permission_level", sa.String(255), nullable=False),
-        sa.ForeignKeyConstraint(("org_id",), ["organisation.id"]),
+        sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 
 

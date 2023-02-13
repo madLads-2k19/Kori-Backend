@@ -39,7 +39,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    uri = Settings().database_uri
+    uri = Settings().DATABASE_URI
     context.configure(
         url=uri,
         target_metadata=target_metadata,
@@ -58,7 +58,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    uri = Settings().database_uri
+    uri = Settings().DATABASE_URI
     connectable = create_engine(uri)
 
     with connectable.connect() as connection:
