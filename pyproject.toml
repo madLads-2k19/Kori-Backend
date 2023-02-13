@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "kori-backend"
+version = "0.1.0"
+description = "A Retail Store Automation Platform"
+authors = ["baxx <susanth1503@gmail.com>"]
+readme = "README.md"
+packages = [{include = "kori"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+alembic = "^1.9.3"
+pydantic = "^1.10.4"
+python-dotenv = "^0.21.1"
+psycopg2-binary = "^2.9.5"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+isort = "^5.11.4"
+pre-commit = "^2.21.0"
+poetry = "^1.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
