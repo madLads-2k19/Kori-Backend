@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     SERVER_HOST: str
     SERVER_PORT: int
+    APP_PREFIX: str = "/customer"
 
     # Postgres DB
     DATABASE_HOST: str
@@ -20,7 +21,9 @@ class Settings(BaseSettings):
     DATABASE_URI: Optional[str] = None
 
     @validator("DATABASE_URI")
-    def construct_database_connection_uri(cls, v: Optional[str], values: dict[str, Any]) -> str | PostgresDsn:
+    def construct_database_connection_uri(
+        cls, v: Optional[str], values: dict[str, Any]
+    ) -> str | PostgresDsn:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
