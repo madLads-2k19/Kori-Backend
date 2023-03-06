@@ -23,7 +23,7 @@ def upgrade() -> None:
         "warehouse",
         sa.Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("name", sa.String(255), nullable=False),
+        sa.Column("name", sa.String(128), nullable=False),
         sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 

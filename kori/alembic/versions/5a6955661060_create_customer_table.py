@@ -23,13 +23,13 @@ def upgrade() -> None:
         "customer",
         sa.Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("name", sa.String(255), nullable=False),
+        sa.Column("name", sa.String(128), nullable=False),
         sa.Column("email", sa.String(255), nullable=True),
         sa.Column("phone_number", sa.String(32), nullable=False),
         sa.Column("is_member", sa.Boolean(), default=False),
         sa.Column("membership_points", sa.Integer(), default=0),
         sa.Column("address", sa.Text(), nullable=True),
-        sa.Column("preferred_payment_method", sa.String(255), nullable=True),
+        sa.Column("preferred_payment_method", sa.String(64), nullable=True),
         sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 

@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column("product_id", UUID(as_uuid=True), nullable=False),
         sa.Column("version_id", UUID(as_uuid=True), nullable=False),
         sa.Column("customer_bill_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("product_quantity", sa.Integer(), nullable=False),
+        sa.Column("product_quantity", sa.Numeric(2), nullable=False),
         sa.Column("total_cost", sa.Numeric(2), nullable=False),
         sa.ForeignKeyConstraint(("product_id", "version_id"), ["product_version.product_id", "product_version.version_id"]),
     )

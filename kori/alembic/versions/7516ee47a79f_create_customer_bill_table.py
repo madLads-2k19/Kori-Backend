@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column("store_id", UUID(as_uuid=True), nullable=False),
         sa.Column("customer_id", UUID(as_uuid=True), nullable=False),
         sa.Column("user_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("payment_method", sa.String(255), nullable=False),
+        sa.Column("payment_method", sa.String(64), nullable=False),
         sa.Column("products_total", sa.Numeric(2), nullable=False),
         sa.Column("discount_price", sa.Numeric(2), nullable=False),
         sa.Column("delivery_address", sa.Text(), nullable=True),
