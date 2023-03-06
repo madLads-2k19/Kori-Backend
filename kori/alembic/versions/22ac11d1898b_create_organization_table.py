@@ -22,7 +22,7 @@ def upgrade() -> None:
     op.create_table(
         "organization",
         sa.Column("id",  UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
-        sa.Column("name", sa.String(255), nullable=False)
+        sa.Column("name", sa.String(128), nullable=False)
     )
 
 

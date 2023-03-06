@@ -23,9 +23,9 @@ def upgrade() -> None:
         "user",
         sa.Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("name", sa.String(255), nullable=False),
+        sa.Column("name", sa.String(128), nullable=False),
         sa.Column("email", sa.String(255), nullable=False),
-        sa.Column("permission_level", sa.String(255), nullable=False),
+        sa.Column("permission_level", sa.String(32), nullable=False),
         sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 
