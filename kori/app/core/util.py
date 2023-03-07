@@ -1,7 +1,7 @@
 import re
 
 
-def camel_to_snake(s: str):
+def camel_to_snake(s: str) -> str:
     """
     This helper can be used to convert camelCase/TitleCase to snake_case
 
