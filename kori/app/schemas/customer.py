@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
@@ -6,11 +5,11 @@ from pydantic import BaseModel, EmailStr
 
 class CustomerBase(BaseModel):
     org_id: UUID
-    email: Optional[EmailStr] = None
+    email: EmailStr | None = None
     is_member: bool = False
     membership_points: int = 0
-    address: Optional[str] = None
-    preferred_payment_method: Optional[str] = None
+    address: str | None = None
+    preferred_payment_method: str | None = None
 
 
 class CustomerCreate(CustomerBase):
@@ -19,8 +18,8 @@ class CustomerCreate(CustomerBase):
 
 
 class CustomerUpdate(CustomerBase):
-    name: Optional[str] = None
-    phone_number: Optional[str] = None
+    name: str | None = None
+    phone_number: str | None = None
 
 
 class Customer(CustomerCreate):
