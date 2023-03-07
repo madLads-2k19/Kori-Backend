@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import TIMESTAMP
