@@ -1,7 +1,4 @@
-from uuid import uuid4
-
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from kori.app.db.base import Base

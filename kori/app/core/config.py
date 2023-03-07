@@ -21,9 +21,7 @@ class Settings(BaseSettings):
     DATABASE_URI: str | None = None
 
     @validator("DATABASE_URI")
-    def construct_database_connection_uri(
-        cls, v: str | None, values: dict[str, Any]
-    ) -> str | PostgresDsn:
+    def construct_database_connection_uri(cls, v: str | None, values: dict[str, Any]) -> str | PostgresDsn:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(
