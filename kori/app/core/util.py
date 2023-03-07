@@ -12,4 +12,3 @@ def camel_to_snake(s: str) -> str:
         return s.lower()
     else:
         return re.sub("([A-Z])", "_\\1", s).lower().lstrip("_")
-

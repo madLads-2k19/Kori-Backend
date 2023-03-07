@@ -3,15 +3,17 @@ from datetime import datetime
 from kori.app.core.config import Settings
 from kori.app.db.connection import DbConnector
 from kori.app.models import (
-    GlobalConfig,
-    Store,
-    Warehouse,
-    User,
     Customer,
+    CustomerBill,
+    GlobalConfig,
     Product,
-    WarehouseProduct,
+    ProductBilled,
+    ProductVersion,
+    Store,
     StoreProduct,
-    ProductVersion, ProductBilled, CustomerBill,
+    User,
+    Warehouse,
+    WarehouseProduct,
 )
 from kori.app.models.organization import Organization
 
@@ -40,7 +42,11 @@ if __name__ == "__main__":
     warehouse_id = warehouse.id
 
     user = User(
-        org_id=org_id, name="Test User", email="Test email", permission_level="Test", pass_hash=b"Test"
+        org_id=org_id,
+        name="Test User",
+        email="Test email",
+        permission_level="Test",
+        pass_hash=b"Test",
     )
     session.add(user)
     session.commit()
@@ -65,15 +71,11 @@ if __name__ == "__main__":
     session.commit()
     product_id = product.id
 
-    warehouse_product = WarehouseProduct(
-        warehouse_id=warehouse_id, product_id=product_id, stock_available=20
-    )
+    warehouse_product = WarehouseProduct(warehouse_id=warehouse_id, product_id=product_id, stock_available=20)
     session.add(warehouse_product)
     session.commit()
 
-    store_product = StoreProduct(
-        store_id=store_id, product_id=product_id, stock_available=20, stock_locked=5
-    )
+    store_product = StoreProduct(store_id=store_id, product_id=product_id, stock_available=20, stock_locked=5)
     session.add(store_product)
     session.commit()
 
@@ -84,7 +86,7 @@ if __name__ == "__main__":
         price=20,
         valid_from=datetime.now(),
         valid_to=datetime.now(),
-        measurement_unit="Test"
+        measurement_unit="Test",
     )
     session.add(product_version)
     session.commit()
@@ -101,7 +103,7 @@ if __name__ == "__main__":
         delivery_address="Test",
         delivery_charge=0,
         net_price=50,
-        billed_at=datetime.now()
+        billed_at=datetime.now(),
     )
     session.add(customer_bill)
     session.commit()
@@ -112,7 +114,7 @@ if __name__ == "__main__":
         customer_bill_id=cb_id,
         product_quantity=1,
         version_id=pv_id,
-        total_cost=50
+        total_cost=50,
     )
     session.add(product_billed)
     session.commit()

@@ -14,4 +14,3 @@ class GlobalConfig(Base):
     value = Column(String)
 
     organization = relationship("Organization", back_populates="global_configs")
-    

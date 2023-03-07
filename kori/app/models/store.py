@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from sqlalchemy import Column, String, ForeignKey, Boolean, Integer, Text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -15,4 +15,3 @@ class Store(Base):
     organization = relationship("Organization", back_populates="stores")
     customer_bills = relationship("CustomerBill", back_populates="store")
     store_products = relationship("StoreProduct", back_populates="store")
-

@@ -1,10 +1,9 @@
 from uuid import uuid4
 
-from sqlalchemy import Column, String, ForeignKey, Integer, Numeric, Text
+from sqlalchemy import Column, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import TIMESTAMP
-
 
 from kori.app.db.base import Base
 
