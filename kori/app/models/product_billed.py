@@ -7,7 +7,7 @@ from kori.app.db.base import Base
 class ProductBilled(Base):
     product_id = Column(ForeignKey("product.id"), primary_key=True)
     version_id = Column(ForeignKey("product_version.version_id"), primary_key=True)
-    customer_bill_id = Column(ForeignKey("customer_bill.id"))
+    customer_bill_id = Column(ForeignKey("customer_bill.id"), primary_key=True)
     product_quantity = Column(Numeric)
     total_cost = Column(Numeric)
 
