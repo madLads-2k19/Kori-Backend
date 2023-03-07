@@ -8,13 +8,13 @@ Create Date: 2023-02-12 20:21:40.268996
 import datetime
 import uuid
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy import UUID
 
 # revision identifiers, used by Alembic.
-revision = 'de4af1b594b0'
-down_revision = '2f4cdef0f290'
+revision = "de4af1b594b0"
+down_revision = "2f4cdef0f290"
 branch_labels = None
 depends_on = None
 

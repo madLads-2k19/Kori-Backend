@@ -7,13 +7,13 @@ Create Date: 2023-02-12 19:39:44.206378
 """
 import uuid
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy import UUID
 
 # revision identifiers, used by Alembic.
-revision = '459a65179543'
-down_revision = '22ac11d1898b'
+revision = "459a65179543"
+down_revision = "22ac11d1898b"
 branch_labels = None
 depends_on = None
 

@@ -7,13 +7,13 @@ Create Date: 2023-02-12 21:12:13.433017
 """
 import uuid
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy import UUID
 
 # revision identifiers, used by Alembic.
-revision = 'f4a2be1b7417'
-down_revision = '7516ee47a79f'
+revision = "f4a2be1b7417"
+down_revision = "7516ee47a79f"
 branch_labels = None
 depends_on = None
 
@@ -26,7 +26,10 @@ def upgrade() -> None:
         sa.Column("customer_bill_id", UUID(as_uuid=True), primary_key=True),
         sa.Column("product_quantity", sa.Numeric(2), nullable=False),
         sa.Column("total_cost", sa.Numeric(2), nullable=False),
-        sa.ForeignKeyConstraint(("product_id", "version_id"), ["product_version.product_id", "product_version.version_id"]),
+        sa.ForeignKeyConstraint(
+            ("product_id", "version_id"),
+            ["product_version.product_id", "product_version.version_id"],
+        ),
         sa.ForeignKeyConstraint(("customer_bill_id",), ["customer_bill.id"]),
     )
 
