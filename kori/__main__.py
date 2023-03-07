@@ -6,17 +6,12 @@ from kori.app.routers.customer import customer_router
 
 settings = Settings()
 
-app = FastAPI(
-    title="Ango - User microservice",
-    docs_url=f"{settings.APP_PREFIX.rstrip('/')}/docs",
-    redoc_url=f"{settings.APP_PREFIX.rstrip('/')}/redoc",
-    openapi_url=f"{settings.APP_PREFIX.rstrip('/')}/openapi.json",
-)
+app = FastAPI(title=settings.APP_TITLE)
 
 app.include_router(
     customer_router,
-    prefix=f"{settings.APP_PREFIX.rstrip('/')}/v1",
-    tags=["User API V1"],
+    prefix=f"/customer/v1",
+    tags=["Customer API V1"],
 )
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 
     SERVER_HOST: str
     SERVER_PORT: int
-    APP_PREFIX: str = "/customer"
+    APP_TITLE: str = "Kori Backend"
 
     # Postgres DB
     DATABASE_HOST: str
