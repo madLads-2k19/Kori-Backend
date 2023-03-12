@@ -13,3 +13,12 @@ class DuplicateRecordException(KoriException):
         message: str = "Record already exists",
     ):
         super(KoriException, self).__init__(status_code, message)
+
+
+class NotFoundException(KoriException):
+    def __init__(
+        self,
+        status_code: int = status.HTTP_404_NOT_FOUND,
+        message: str = "Record not found",
+    ):
+        super(KoriException, self).__init__(status_code, message)
