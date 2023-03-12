@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
         sa.Column("name", sa.String(128), nullable=False),
         sa.Column("email", sa.String(255), nullable=True),
-        sa.Column("phone_number", sa.String(32), nullable=False),
+        sa.Column("phone_number", sa.String(32), nullable=False, unique=True),
         sa.Column("is_member", sa.Boolean(), default=False),
         sa.Column("membership_points", sa.Integer(), default=0),
         sa.Column("address", sa.Text(), nullable=True),
