@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     DATABASE_NAME: str
     DATABASE_URI: str | None = None
 
+    # JWT
+    algorithm: str
+    secret_key: str
+    access_token_expire_minutes: int
+
     @validator("DATABASE_URI")
     def construct_database_connection_uri(cls, v: str | None, values: dict[str, Any]) -> str | PostgresDsn:
         if isinstance(v, str):
