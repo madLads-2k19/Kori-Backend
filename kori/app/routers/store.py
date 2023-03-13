@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 import kori.app.dao.store as store_dao
 from kori.app.core.config import Settings
+from kori.app.core.exceptions import ForbiddenException
 from kori.app.schemas.store import StoreCreate, StoreSchema, StoreUpdate
 
 store_router = APIRouter()
@@ -14,6 +15,9 @@ BASE = "/{organization_id}"
 
 @store_router.post(BASE, response_model=StoreSchema)
 def create_store(organization_id: UUID, store_create: StoreCreate) -> StoreSchema:
+    if store_create.org_id != organization_id:
+        raise ForbiddenException()
+
     return store_dao.create(store_create)
 
 
@@ -31,6 +35,9 @@ def get_all_stores(organization_id: UUID) -> list[StoreSchema]:
 
 @store_router.put(BASE + "/{store_id}", response_model=StoreSchema)
 def update_store(organization_id: UUID, store_id: UUID, store_update: StoreUpdate) -> StoreSchema:
+    if store_update.org_id != organization_id:
+        raise ForbiddenException()
+
     return store_dao.update(organization_id, store_id, store_update)
 
 
