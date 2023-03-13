@@ -24,12 +24,12 @@ def create(store_create: StoreCreate) -> StoreSchema:
 
 def get_store_by_id(organization_id: UUID, store_id: UUID) -> StoreSchema:
     session = db_connector.get_session()
-    store = session.query(Store).get(store_id)
+    stores = list(session.query(Store).filter(Store.org_id == organization_id, Store.id == store_id))
 
-    if store is None or store.org_id != organization_id:
+    if len(stores) == 0:
         raise NotFoundException()
 
-    return StoreSchema.from_orm(store)
+    return StoreSchema.from_orm(stores[0])
 
 
 def get_stores_of_organization(organization_id) -> list[StoreSchema]:
