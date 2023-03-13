@@ -4,17 +4,18 @@ from fastapi import FastAPI
 from kori.app.core.config import Settings
 from kori.app.routers.customer import customer_router
 from kori.app.routers.organization import organization_router
+from kori.app.routers.user import user_router
 from kori.app.routers.product import product_router
 from kori.app.routers.store import store_router
 from kori.app.routers.store_product import store_product_router
 
-settings = Settings()
+config = Settings()
 
-app = FastAPI(title=settings.APP_TITLE)
+app = FastAPI(title=config.APP_TITLE)
 
 app.include_router(
     customer_router,
-    prefix=f"/customer/v1",
+    prefix="/customer/v1",
     tags=["Customer API V1"],
 )
 app.include_router(
@@ -25,7 +26,7 @@ app.include_router(
 
 app.include_router(
     organization_router,
-    prefix=f"/organization/v1",
+    prefix="/organization/v1",
     tags=["Organization API V1"],
 )
 
@@ -41,5 +42,7 @@ app.include_router(
     tags=["Store Product API V1"],
 )
 
+app.include_router(user_router, prefix="/user/v1", tags=["User API V1"])
+
 if __name__ == "__main__":
-    uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
+    uvicorn.run(app, host=config.SERVER_HOST, port=config.SERVER_PORT)
