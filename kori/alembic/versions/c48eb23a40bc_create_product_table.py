@@ -24,6 +24,7 @@ def upgrade() -> None:
         sa.Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4),
         sa.Column("org_id", UUID(as_uuid=True), nullable=False),
         sa.Column("reorder_level", sa.Integer(), nullable=False),
+        sa.Column("is_deleted", sa.Boolean(), default=False),
         sa.ForeignKeyConstraint(("org_id",), ["organization.id"]),
     )
 
