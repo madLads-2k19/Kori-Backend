@@ -2,7 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 import kori.app.dao.product as product_dao
-from kori.app.schemas.product import ProductCreateRequest, ProductSchema, ProductCreate, ProductUpdate
+from kori.app.schemas.product import ProductCreate, ProductCreateRequest, ProductSchema, ProductUpdate
 
 
 def create(org_id: UUID, product_data: ProductCreateRequest) -> ProductSchema:
