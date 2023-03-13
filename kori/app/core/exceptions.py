@@ -22,3 +22,12 @@ class NotFoundException(KoriException):
         message: str = "Record not found",
     ):
         super(KoriException, self).__init__(status_code, message)
+
+
+class ForbiddenException(KoriException):
+    def __init__(
+        self,
+        status_code: int = status.HTTP_403_FORBIDDEN,
+        message: str = "Access forbidden",
+    ):
+        super(KoriException, self).__init__(status_code, message)
