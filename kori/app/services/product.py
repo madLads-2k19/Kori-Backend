@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 import kori.app.dao.product as product_dao
@@ -10,12 +11,8 @@ def create(org_id: UUID, product_data: ProductCreateRequest) -> ProductSchema:
     return product_dao.create(product_data=product_create)
 
 
-def get_latest_product_by_id(product_id: UUID) -> ProductSchema:
-    return product_dao.get_latest_product_by_id(product_id=product_id)
-
-
-def get_product_by_timestamp(product_id: UUID, timestamp: datetime) -> ProductSchema:
-    return product_dao.get_product_by_timestamp(product_id=product_id, timestamp=timestamp)
+def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchema:
+    return product_dao.get_product(product_id=product_id, timestamp=timestamp)
 
 
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:

@@ -19,10 +19,7 @@ def create_product(org_id: UUID, product_data: ProductCreateRequest) -> ProductS
 
 @product_router.get("/{product_id}", response_model=ProductSchema)
 def get_product_by_id(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
-    if timestamp:
-        return product_service.get_product_by_timestamp(product_id=product_id, timestamp=timestamp)
-    else:
-        return product_service.get_latest_product_by_id(product_id=product_id)
+    return product_service.get_product(product_id=product_id, timestamp=timestamp)
 
 
 @product_router.put("/{product_id}", response_model=ProductSchema)

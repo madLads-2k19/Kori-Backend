@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -50,7 +51,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
     )
 
 
-def get_latest_product_by_id(product_id: UUID) -> ProductSchema:
+def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchema:
     session = db_connector.get_session()
     try:
         product = session.query(Product).filter(Product.id == product_id).one()
@@ -58,41 +59,21 @@ def get_latest_product_by_id(product_id: UUID) -> ProductSchema:
         if product.is_deleted:
             raise NotFoundException(message="Product is deleted")
 
-        product_version = (
-            session.query(ProductVersion)
-            .filter(ProductVersion.product_id == product_id)
-            .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
-            .one()
-        )
+        if timestamp:
+            product_version = (
+                session.query(ProductVersion)
+                .filter(ProductVersion.valid_from <= timestamp)
+                .filter(ProductVersion.valid_to >= timestamp)
+                .one()
+            )
+        else:
+            product_version = (
+                session.query(ProductVersion)
+                .filter(ProductVersion.product_id == product_id)
+                .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
+                .one()
+            )
 
-    except NoResultFound:
-        raise NotFoundException(message="Product Details not found")
-
-    return ProductSchema(
-        product_id=product.id,
-        reorder_level=product.reorder_level,
-        version_id=product_version.version_id,
-        org_id=product.org_id,
-        name=product_version.name,
-        price=product_version.price,
-        measurement_unit=product_version.measurement_unit,
-    )
-
-
-def get_product_by_timestamp(product_id: UUID, timestamp: datetime) -> ProductSchema:
-    session = db_connector.get_session()
-    try:
-        product = session.query(Product).filter(Product.id == product_id).one()
-
-        if product.is_deleted:
-            raise NotFoundException(message="Product is deleted")
-
-        product_version = (
-            session.query(ProductVersion)
-            .filter(ProductVersion.valid_from <= timestamp)
-            .filter(ProductVersion.valid_to >= timestamp)
-            .one()
-        )
     except NoResultFound:
         raise NotFoundException(message="Product Details not found")
 
