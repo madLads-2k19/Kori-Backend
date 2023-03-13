@@ -7,9 +7,9 @@ from kori.app.models.organization import Organization
 from kori.app.schemas.organization import OrganizationCreate, OrganizationSchema, OrganizationUpdate
 from kori.app.utils.dict_utils import remove_null_values
 
-settings = Settings()
+config = Settings()
 
-db_connector = DbConnector(settings.DATABASE_URI)
+db_connector = DbConnector(config.DATABASE_URI)
 
 
 def create(organization_create: OrganizationCreate) -> OrganizationSchema:
