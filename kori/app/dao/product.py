@@ -1,11 +1,10 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import desc
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from kori.app.core.config import Settings
-from kori.app.core.exceptions import BadRequestException, NotFoundException
+from kori.app.core.exceptions import NotFoundException
 from kori.app.db.connection import DbConnector
 from kori.app.models import ProductVersion
 from kori.app.models.product import Product
@@ -23,6 +22,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
 
     try:
         session.add(new_product_db)
+        session.flush()
 
         new_product_version_db = ProductVersion(
             version_id=1,
@@ -52,22 +52,21 @@ def create(product_data: ProductCreate) -> ProductSchema:
 
 def get_latest_product_by_id(product_id: UUID) -> ProductSchema:
     session = db_connector.get_session()
-    product = list(session.query(Product).filter(Product.id == product_id))
+    try:
+        product = session.query(Product).filter(Product.id == product_id).one()
 
-    if not product:
+        if product.is_deleted:
+            raise NotFoundException(message="Product is deleted")
+
+        product_version = (
+            session.query(ProductVersion)
+            .filter(ProductVersion.product_id == product_id)
+            .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
+            .one()
+        )
+
+    except NoResultFound:
         raise NotFoundException(message="Product Details not found")
-    product = product[0]
-
-    if product.is_deleted:
-        raise NotFoundException(message="Product is deleted")
-
-    product_version = list(
-        session.query(ProductVersion)
-        .filter(ProductVersion.product_id == product_id)
-        .order_by(desc(ProductVersion.version_id))
-        .limit(1)
-    )
-    product_version = product_version[0]
 
     return ProductSchema(
         product_id=product.id,
@@ -82,21 +81,20 @@ def get_latest_product_by_id(product_id: UUID) -> ProductSchema:
 
 def get_product_by_timestamp(product_id: UUID, timestamp: datetime) -> ProductSchema:
     session = db_connector.get_session()
-    product = list(session.query(Product).filter(Product.id == product_id))
+    try:
+        product = session.query(Product).filter(Product.id == product_id).one()
 
-    if product and product[0].is_deleted:
+        if product.is_deleted:
+            raise NotFoundException(message="Product is deleted")
+
+        product_version = (
+            session.query(ProductVersion)
+            .filter(ProductVersion.valid_from <= timestamp)
+            .filter(ProductVersion.valid_to >= timestamp)
+            .one()
+        )
+    except NoResultFound:
         raise NotFoundException(message="Product Details not found")
-    product = product[0]
-
-    product_version = list(
-        session.query(ProductVersion)
-        .filter(ProductVersion.valid_from <= timestamp)
-        .filter(ProductVersion.valid_to >= timestamp)
-    )
-    if not product_version:
-        raise NotFoundException(message="Product Version not found in specified timestamp")
-
-    product_version = product_version[0]
 
     return ProductSchema(
         product_id=product.id,
@@ -111,15 +109,18 @@ def get_product_by_timestamp(product_id: UUID, timestamp: datetime) -> ProductSc
 
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
     session = db_connector.get_session()
+    try:
+        existing_product = session.query(Product).filter(Product.id == product_id).one()
 
-    existing_product = list(session.query(Product).filter(Product.id == product_id))[0]
+        latest_product_version = (
+            session.query(ProductVersion)
+            .filter(ProductVersion.product_id == product_id)
+            .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
+            .one()
+        )
+    except NoResultFound:
+        raise NotFoundException(message="Product Details not found")
 
-    latest_product_version = list(
-        session.query(ProductVersion)
-        .filter(ProductVersion.product_id == product_id)
-        .order_by(desc(ProductVersion.version_id))
-        .limit(1)
-    )[0]
     current_time = datetime.now()
     latest_product_version.valid_to = current_time
 
@@ -135,7 +136,6 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
         and updated_product_version_data["price"] == latest_product_version.price
         and updated_product_version_data["measurement_unit"] == latest_product_version.measurement_unit
     ):
-
         # Create a new version of the product with updated version_id
         new_product_version_db = ProductVersion(
             version_id=latest_product_version.version_id + 1,
@@ -162,9 +162,10 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
 def delete(product_id: UUID) -> None:
     session = db_connector.get_session()
 
-    existing_product = list(session.query(Product).filter(Product.id == product_id))
-    if existing_product:
-        existing_product[0].is_deleted = False
-    else:
-        raise NotFoundException(message="Product not found.")
+    try:
+        existing_product = session.query(Product).filter(Product.id == product_id).one()
+    except NoResultFound:
+        raise NotFoundException(message="Product not found")
+
+    existing_product.is_deleted = True
     session.commit()
