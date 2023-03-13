@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
+
 from fastapi import APIRouter
 
-from kori.app.core.config import Settings
 import kori.app.services.product as product_service
+from kori.app.core.config import Settings
 from kori.app.schemas.product import ProductCreateRequest, ProductSchema, ProductUpdate
 
 product_router = APIRouter()

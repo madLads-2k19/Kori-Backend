@@ -2,9 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 
 from kori.app.core.config import Settings
-from kori.app.routers.product import product_router
 from kori.app.routers.customer import customer_router
 from kori.app.routers.organization import organization_router
+from kori.app.routers.product import product_router
 from kori.app.routers.store import store_router
 
 settings = Settings()
