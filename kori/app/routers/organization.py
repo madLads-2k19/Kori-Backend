@@ -7,7 +7,7 @@ from kori.app.core.config import Settings
 from kori.app.schemas.organization import OrganizationCreate, OrganizationSchema, OrganizationUpdate
 
 organization_router = APIRouter()
-settings = Settings()
+config = Settings()
 
 
 @organization_router.post("/", response_model=OrganizationSchema)
