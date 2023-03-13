@@ -9,9 +9,9 @@ from kori.app.models.customer import Customer
 from kori.app.schemas.customer import CustomerCreate, CustomerSchema, CustomerUpdate
 from kori.app.utils.dict_utils import remove_null_values
 
-settings = Settings()
+config = Settings()
 
-db_connector = DbConnector(settings.DATABASE_URI)
+db_connector = DbConnector(config.DATABASE_URI)
 
 
 def create(customer_data: CustomerCreate) -> CustomerSchema:

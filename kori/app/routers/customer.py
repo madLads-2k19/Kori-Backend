@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from fastapi import APIRouter
 
@@ -7,7 +7,7 @@ from kori.app.core.config import Settings
 from kori.app.schemas.customer import CustomerCreateRequest, CustomerSchema, CustomerUpdate
 
 customer_router = APIRouter()
-settings = Settings()
+config = Settings()
 
 
 @customer_router.post("/{organization_id}", response_model=CustomerSchema)
