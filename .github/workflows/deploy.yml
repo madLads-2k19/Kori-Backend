@@ -1,0 +1,20 @@
+
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy-flow:
+    uses: madLads-2k19/ci-cd-actions/.github/workflows/deploy.yaml@master
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+    with:
+      app-name: kori
+      app-environment: production
+      py-module: kori
