@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from kori.app.core.config import Settings
+from kori.app.routers.product import product_router
 from kori.app.routers.customer import customer_router
 from kori.app.routers.organization import organization_router
 from kori.app.routers.store import store_router
@@ -14,6 +15,11 @@ app.include_router(
     customer_router,
     prefix=f"/customer/v1",
     tags=["Customer API V1"],
+)
+app.include_router(
+    product_router,
+    prefix=f"/product/v1",
+    tags=["Product API V1"],
 )
 
 app.include_router(
