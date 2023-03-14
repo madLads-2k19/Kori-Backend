@@ -21,9 +21,9 @@ class Settings(BaseSettings):
     DATABASE_URI: str | None = None
 
     # JWT
-    algorithm: str
-    secret_key: str
-    access_token_expire_minutes: int
+    ALGORITHM: str
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     @validator("DATABASE_URI")
     def construct_database_connection_uri(cls, v: str | None, values: dict[str, Any]) -> str | PostgresDsn:
