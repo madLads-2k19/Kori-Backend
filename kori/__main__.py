@@ -6,6 +6,7 @@ from kori.app.routers.customer import customer_router
 from kori.app.routers.organization import organization_router
 from kori.app.routers.product import product_router
 from kori.app.routers.store import store_router
+from kori.app.routers.store_product import store_product_router
 
 settings = Settings()
 
@@ -34,6 +35,11 @@ app.include_router(
     tags=["Store API V1"],
 )
 
+app.include_router(
+    store_product_router,
+    prefix=f"/store_product/v1",
+    tags=["Store Product API V1"],
+)
 
 if __name__ == "__main__":
     uvicorn.run(app, host=settings.SERVER_HOST, port=settings.SERVER_PORT)
