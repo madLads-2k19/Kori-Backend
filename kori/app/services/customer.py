@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import kori.app.dao.customer as customer_dao
+from kori.app.core.exceptions import NotFoundException
 from kori.app.schemas.customer import CustomerCreate, CustomerCreateRequest, CustomerSchema, CustomerUpdate
 
 
@@ -9,16 +10,25 @@ def create(org_id: UUID, customer_data: CustomerCreateRequest) -> CustomerSchema
     return customer_dao.create(customer_create)
 
 
-def get_customer_by_id(customer_id: UUID) -> CustomerSchema | None:
-    return customer_dao.get_customer_by_id(customer_id)
+def get_customer_by_id(customer_id: UUID) -> CustomerSchema:
+    customer = customer_dao.get_customer_by_id(customer_id)
+    if not customer:
+        raise NotFoundException(message="Customer not found")
+    return customer
 
 
-def get_customer_by_number(phone_number: str) -> CustomerSchema | None:
-    return customer_dao.get_customer_by_number(phone_number)
+def get_customer_by_number(phone_number: str) -> CustomerSchema:
+    customer = customer_dao.get_customer_by_number(phone_number)
+    if not customer:
+        raise NotFoundException(message="Customer not found")
+    return customer
 
 
-def update(customer_id: UUID, customer_data: CustomerUpdate) -> CustomerSchema:
-    return customer_dao.update(customer_id, customer_data)
+def update(customer_id: UUID, customer_data: CustomerUpdate) -> CustomerSchema | None:
+    customer = customer_dao.update(customer_id, customer_data)
+    if not customer:
+        raise NotFoundException(message="Customer not found")
+    return customer
 
 
 def delete(customer_id: UUID) -> None:

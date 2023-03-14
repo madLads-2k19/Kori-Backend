@@ -4,6 +4,7 @@ from pydantic import EmailStr
 
 import kori.app.dao.user as user_dao
 from kori.app.core.crypto import hash_password
+from kori.app.core.exceptions import NotFoundException
 from kori.app.schemas.user import UserCreate, UserCreateRequest, UserSchema, UserUpdate, UserUpdateRequest
 
 
@@ -14,12 +15,18 @@ def create(org_id: UUID, create_request: UserCreateRequest) -> UserSchema:
     return created_user
 
 
-def get_user_by_id(user_id: UUID) -> UserSchema | None:
-    return user_dao.get_user_by_id(user_id)
+def get_user_by_id(user_id: UUID) -> UserSchema:
+    user = user_dao.get_user_by_id(user_id)
+    if not user:
+        raise NotFoundException(message="User not found")
+    return user
 
 
-def get_user_by_email(org_id: UUID, email: EmailStr) -> UserSchema | None:
-    return user_dao.get_user_by_email(org_id, email)
+def get_user_by_email(org_id: UUID, email: EmailStr) -> UserSchema:
+    user = user_dao.get_user_by_email(org_id, email)
+    if not user:
+        raise NotFoundException(message="User not found")
+    return user
 
 
 def update(user_id: UUID, update_request: UserUpdateRequest) -> UserSchema:
@@ -27,7 +34,10 @@ def update(user_id: UUID, update_request: UserUpdateRequest) -> UserSchema:
     if update_request.password:
         hashed_password = hash_password(update_request.password)
     user_update = UserUpdate(**update_request.dict(), pass_hash=hashed_password)
-    return user_dao.update(user_id, user_update)
+    user = user_dao.update(user_id, user_update)
+    if not user:
+        raise NotFoundException(message="User not found")
+    return user
 
 
 def delete(user_id: UUID) -> None:
