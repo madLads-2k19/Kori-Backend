@@ -21,8 +21,8 @@ depends_on = None
 def upgrade() -> None:
     op.create_table(
         "store_product",
-        sa.Column("product_id", UUID(as_uuid=True), nullable=False),
-        sa.Column("store_id", UUID(as_uuid=True), nullable=False),
+        sa.Column("product_id", UUID(as_uuid=True), nullable=False, primary_key=True),
+        sa.Column("store_id", UUID(as_uuid=True), nullable=False, primary_key=True),
         sa.Column("stock_available", sa.Integer(), nullable=False),
         sa.Column("stock_locked", sa.Integer(), nullable=False, default=0),
         sa.ForeignKeyConstraint(("product_id",), ["product.id"]),
