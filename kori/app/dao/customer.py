@@ -29,17 +29,17 @@ def create(customer_data: CustomerCreate) -> CustomerSchema:
 
 def get_customer_by_id(customer_id: UUID) -> CustomerSchema | None:
     session = db_connector.get_session()
-    customers = list(session.query(Customer).filter(Customer.id == customer_id))
-    return CustomerSchema.from_orm(customers[0]) if customers else None
+    customer = session.query(Customer).filter(Customer.id == customer_id).one_or_none()
+    return CustomerSchema.from_orm(customer) if customer else None
 
 
 def get_customer_by_number(phone_number: str) -> CustomerSchema | None:
     session = db_connector.get_session()
-    customers = list(session.query(Customer).filter(Customer.phone_number == phone_number))
-    return CustomerSchema.from_orm(customers[0]) if customers else None
+    customer = session.query(Customer).filter(Customer.phone_number == phone_number).one_or_none()
+    return CustomerSchema.from_orm(customer) if customer else None
 
 
-def update(customer_id: UUID, customer_data: CustomerUpdate) -> CustomerSchema:
+def update(customer_id: UUID, customer_data: CustomerUpdate) -> CustomerSchema | None:
     session = db_connector.get_session()
     update_data = remove_null_values(customer_data.dict())
 
