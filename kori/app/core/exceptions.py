@@ -33,7 +33,6 @@ class NotFoundException(KoriException):
         super(KoriException, self).__init__(status_code, message)
 
 
-class DuplicateRecordException(KoriException):
 class AuthException(KoriException):
     def __init__(
         self,
@@ -45,7 +44,7 @@ class AuthException(KoriException):
         self.headers = {"WWW-Authenticate": "Bearer"} if not headers else headers
 
 
-class ForbiddenException(KoriException):
+class DuplicateRecordException(KoriException):
     def __init__(
         self,
         status_code: int = status.HTTP_409_CONFLICT,
