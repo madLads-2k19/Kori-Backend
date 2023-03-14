@@ -40,3 +40,12 @@ class DuplicateRecordException(KoriException):
         message: str = "Record already exists",
     ):
         super(KoriException, self).__init__(status_code, message)
+
+
+class StockLevelException(KoriException):
+    def __init__(
+        self,
+        status_code: int = status.HTTP_400_BAD_REQUEST,
+        message: str = "Insufficient stock available",
+    ):
+        super(KoriException, self).__init__(status_code, message)
