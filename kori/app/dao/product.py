@@ -110,11 +110,11 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
     }
     version_id = latest_product_version.version_id
 
-    if not (
-        updated_product_version_data["name"] == latest_product_version.name
-        and updated_product_version_data["price"] == latest_product_version.price
-        and updated_product_version_data["measurement_unit"] == latest_product_version.measurement_unit
+    if any(
+        updated_product_version_data[k] != getattr(latest_product_version, k)
+        for k in ["name", "measurement_unit", "price"]
     ):
+
         # Create a new version of the product with updated version_id
         new_product_version_db = ProductVersion(
             version_id=latest_product_version.version_id + 1,
