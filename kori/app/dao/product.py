@@ -60,6 +60,9 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()
     try:
         product = session.query(Product).get(product_id)
 
+        if not product:
+            raise NotFoundException(message="Product Details not found")
+
         if product.is_deleted:
             raise NotFoundException(message="Product is deleted")
         product_version = (
@@ -91,6 +94,9 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
     session = db_connector.get_session()
     try:
         existing_product = session.query(Product).get(product_id)
+
+        if not existing_product:
+            raise NotFoundException(message="Product Details not found")
 
         latest_product_version = (
             session.query(ProductVersion)
@@ -142,10 +148,10 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
 def delete(product_id: UUID) -> None:
     session = db_connector.get_session()
 
-    try:
-        existing_product = session.query(Product).get(product_id)
-    except NoResultFound:
-        raise NotFoundException(message="Product not found")
+    existing_product = session.query(Product).get(product_id)
+
+    if not existing_product:
+        raise NotFoundException(message="Product Details not found")
 
     existing_product.is_deleted = True
     session.commit()
