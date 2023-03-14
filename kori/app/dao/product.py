@@ -66,15 +66,15 @@ def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchem
         if timestamp:
             product_version = (
                 session.query(ProductVersion)
-                .filter(ProductVersion.valid_from <= timestamp)
-                .filter(ProductVersion.valid_to >= timestamp)
+                .filter(ProductVersion.valid_from <= timestamp, ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
                 .one()
             )
         else:
             product_version = (
                 session.query(ProductVersion)
-                .filter(ProductVersion.product_id == product_id)
-                .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
+                .filter(
+                    ProductVersion.product_id == product_id, ProductVersion.valid_to == "9999-12-31 23:59:59.999999"
+                )
                 .one()
             )
 
@@ -100,8 +100,7 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
 
         latest_product_version = (
             session.query(ProductVersion)
-            .filter(ProductVersion.product_id == product_id)
-            .filter(ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
+            .filter(ProductVersion.product_id == product_id, ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
             .one()
         )
     except NoResultFound:
