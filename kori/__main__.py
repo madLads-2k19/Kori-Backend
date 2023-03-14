@@ -7,6 +7,7 @@ from kori.app.routers.organization import organization_router
 from kori.app.routers.product import product_router
 from kori.app.routers.store import store_router
 from kori.app.routers.store_product import store_product_router
+from kori.app.routers.user import user_router
 
 config = Settings()
 
@@ -39,6 +40,12 @@ app.include_router(
     store_product_router,
     prefix=f"/store_product/v1",
     tags=["Store Product API V1"],
+)
+
+app.include_router(
+    user_router,
+    prefix=f"/store/v1",
+    tags=["Store API V1"],
 )
 
 app.include_router(user_router, prefix="/user/v1", tags=["User API V1"])
