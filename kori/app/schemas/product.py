@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -26,3 +27,4 @@ class ProductCreate(ProductCreateRequest):
 class ProductSchema(ProductCreate):
     product_id: UUID
     version_id: int
+    timestamp: datetime

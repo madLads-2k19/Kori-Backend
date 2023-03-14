@@ -51,6 +51,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
         name=new_product_version_db.name,
         price=new_product_version_db.price,
         measurement_unit=new_product_version_db.measurement_unit,
+        timestamp=datetime.now(),
     )
 
 
@@ -88,6 +89,7 @@ def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchem
         name=product_version.name,
         price=product_version.price,
         measurement_unit=product_version.measurement_unit,
+        timestamp=timestamp or datetime.now(),
     )
 
 
@@ -139,6 +141,7 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
         reorder_level=existing_product.reorder_level,
         version_id=version_id,
         org_id=existing_product.org_id,
+        timestamp=datetime.now(),
         **updated_product_version_data,
     )
 
