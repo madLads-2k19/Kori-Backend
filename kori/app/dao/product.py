@@ -58,7 +58,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
 def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()) -> ProductSchema:
     session = db_connector.get_session()
     try:
-        product = session.query(Product).filter(Product.id == product_id).one()
+        product = session.query(Product).get(product_id)
 
         if product.is_deleted:
             raise NotFoundException(message="Product is deleted")
@@ -90,7 +90,7 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
     session = db_connector.get_session()
     try:
-        existing_product = session.query(Product).filter(Product.id == product_id).one()
+        existing_product = session.query(Product).get(product_id)
 
         latest_product_version = (
             session.query(ProductVersion)
@@ -143,7 +143,7 @@ def delete(product_id: UUID) -> None:
     session = db_connector.get_session()
 
     try:
-        existing_product = session.query(Product).filter(Product.id == product_id).one()
+        existing_product = session.query(Product).get(product_id)
     except NoResultFound:
         raise NotFoundException(message="Product not found")
 
