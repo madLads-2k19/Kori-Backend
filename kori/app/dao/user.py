@@ -29,21 +29,19 @@ def create(user_data: UserCreate) -> UserSchema:
 
 def get_user_by_id(user_id: UUID) -> UserSchema | None:
     session = db_connector.get_session()
-    users = list(session.query(User).filter(User.id == user_id))
-    fetched_user = next(iter(users), None)
+    fetched_user = session.query(User).filter(User.id == user_id).one_or_none()
     if fetched_user:
         return UserSchema.from_orm(fetched_user)
 
 
 def get_user_by_email(org_id: UUID, email: EmailStr) -> UserSchema | None:
     session = db_connector.get_session()
-    users = session.query(User).filter(User.org_id == org_id and User.email == email)
-    fetched_user = next(iter(users), None)
+    fetched_user = session.query(User).filter(User.org_id == org_id, User.email == email).one_or_none()
     if fetched_user:
         return UserSchema.from_orm(fetched_user)
 
 
-def update(user_id: UUID, user_data: UserUpdate) -> UserSchema:
+def update(user_id: UUID, user_data: UserUpdate) -> UserSchema | None:
     session = db_connector.get_session()
     update_data = remove_null_values(user_data.dict())
 
