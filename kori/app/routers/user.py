@@ -48,3 +48,11 @@ def update_user(
     assert user_id == user.id
     assert org_id == user.org_id
     return user_service.update(user_id, update_request)
+
+
+@user_router.delete("/{org_id}")
+def delete_user(org_id: UUID, user_id: UUID, user: UserSchema = Depends(auth_service.verify_access)):
+    assert user_id == user.id
+    assert org_id == user.org_id
+    user_service.delete(user_id)
+    return "Deleted"
