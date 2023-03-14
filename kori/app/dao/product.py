@@ -55,7 +55,11 @@ def create(product_data: ProductCreate) -> ProductSchema:
     )
 
 
-def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()) -> ProductSchema:
+def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
+
+    if not timestamp:
+        timestamp = datetime.now()
+
     session = db_connector.get_session()
     try:
         product = session.query(Product).get(product_id)
