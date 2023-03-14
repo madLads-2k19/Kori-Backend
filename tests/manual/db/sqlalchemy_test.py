@@ -44,7 +44,7 @@ if __name__ == "__main__":
     user = User(
         org_id=org_id,
         name="Test User",
-        email="Test email",
+        email="test@email.com",
         permission_level="Test",
         pass_hash=b"Test",
     )
@@ -55,8 +55,8 @@ if __name__ == "__main__":
     customer = Customer(
         org_id=org_id,
         name="Test User",
-        email="Test Customer",
-        phone_number="Test number",
+        email="test@email.com",
+        phone_number="+911234567890",
         is_member=False,
         membership_points=0,
         address="Test Address",
