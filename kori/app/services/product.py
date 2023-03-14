@@ -11,7 +11,7 @@ def create(org_id: UUID, product_data: ProductCreateRequest) -> ProductSchema:
     return product_dao.create(product_data=product_create)
 
 
-def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchema:
+def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()) -> ProductSchema:
     return product_dao.get_product(product_id=product_id, timestamp=timestamp)
 
 
