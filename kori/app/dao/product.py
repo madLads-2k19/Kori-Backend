@@ -21,24 +21,27 @@ def create(product_data: ProductCreate) -> ProductSchema:
 
     new_product_db = Product(org_id=product_data.org_id, reorder_level=product_data.reorder_level)
 
-    try:
-        session.add(new_product_db)
-        session.flush()
+    with session.begin() as transaction:
+        try:
+            session.add(new_product_db)
+            session.flush()
 
-        new_product_version_db = ProductVersion(
-            version_id=1,
-            product_id=new_product_db.id,
-            name=product_data.name,
-            price=product_data.price,
-            measurement_unit=product_data.measurement_unit,
-            valid_from=datetime.now(),
-            valid_to=datetime(9999, 12, 31, 23, 59, 59, 999999),
-        )
+            new_product_version_db = ProductVersion(
+                version_id=1,
+                product_id=new_product_db.id,
+                name=product_data.name,
+                price=product_data.price,
+                measurement_unit=product_data.measurement_unit,
+                valid_from=datetime.now(),
+                valid_to=datetime(9999, 12, 31, 23, 59, 59, 999999),
+            )
 
-        session.add(new_product_version_db)
-        session.commit()
-    except IntegrityError:
-        raise NotFoundException(message="Organisation not found.")
+            session.add(new_product_version_db)
+            transaction.commit()
+        except IntegrityError:
+            raise NotFoundException(message="Organisation not found.")
+        except Exception:
+            transaction.rollback()
 
     return ProductSchema(
         product_id=new_product_db.id,
