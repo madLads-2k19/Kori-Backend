@@ -14,22 +14,19 @@ db_connector = DbConnector(settings.DATABASE_URI)
 
 def create(store_create: StoreCreate) -> StoreSchema:
     session = db_connector.get_session()
-    new_org_db = Store(**store_create.dict())
+    new_store_db = Store(**store_create.dict())
 
-    session.add(new_org_db)
+    session.add(new_store_db)
     session.commit()
 
-    return StoreSchema.from_orm(new_org_db)
+    return StoreSchema.from_orm(new_store_db)
 
 
-def get_store_by_id(organization_id: UUID, store_id: UUID) -> StoreSchema:
+def get_store_by_id(organization_id: UUID, store_id: UUID) -> StoreSchema | None:
     session = db_connector.get_session()
     stores = list(session.query(Store).filter(Store.org_id == organization_id, Store.id == store_id))
 
-    if len(stores) == 0:
-        raise NotFoundException()
-
-    return StoreSchema.from_orm(stores[0])
+    return StoreSchema.from_orm(stores[0]) if len(stores) != 0 else None
 
 
 def get_stores_of_organization(organization_id) -> list[StoreSchema]:

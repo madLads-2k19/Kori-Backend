@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 import kori.app.dao.store as store_dao
 from kori.app.core.config import Settings
-from kori.app.core.exceptions import ForbiddenException
+from kori.app.core.exceptions import ForbiddenException, NotFoundException
 from kori.app.schemas.store import StoreCreate, StoreSchema, StoreUpdate
 
 store_router = APIRouter()
@@ -25,6 +25,8 @@ def create_store(organization_id: UUID, store_create: StoreCreate) -> StoreSchem
 def get_store_by_id(organization_id: UUID, store_id: UUID) -> StoreSchema:
     store = store_dao.get_store_by_id(organization_id, store_id)
 
+    if not store:
+        raise NotFoundException()
     return store
 
 
