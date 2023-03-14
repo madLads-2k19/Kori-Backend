@@ -55,30 +55,24 @@ def create(product_data: ProductCreate) -> ProductSchema:
     )
 
 
-def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchema:
+def get_product(product_id: UUID, timestamp: Optional[datetime] = datetime.now()) -> ProductSchema:
     session = db_connector.get_session()
     try:
         product = session.query(Product).filter(Product.id == product_id).one()
 
         if product.is_deleted:
             raise NotFoundException(message="Product is deleted")
-
-        if timestamp:
-            product_version = (
-                session.query(ProductVersion)
-                .filter(ProductVersion.valid_from <= timestamp, ProductVersion.valid_to == "9999-12-31 23:59:59.999999")
-                .one()
+        product_version = (
+            session.query(ProductVersion)
+            .filter(
+                ProductVersion.product_id == product_id,
+                ProductVersion.valid_from <= timestamp,
+                ProductVersion.valid_to >= timestamp,
             )
-        else:
-            product_version = (
-                session.query(ProductVersion)
-                .filter(
-                    ProductVersion.product_id == product_id, ProductVersion.valid_to == "9999-12-31 23:59:59.999999"
-                )
-                .one()
-            )
+            .one()
+        )
 
-    except NoResultFound:
+    except NoResultFound as e:
         raise NotFoundException(message="Product Details not found")
 
     return ProductSchema(
@@ -89,7 +83,7 @@ def get_product(product_id: UUID, timestamp: Optional[datetime]) -> ProductSchem
         name=product_version.name,
         price=product_version.price,
         measurement_unit=product_version.measurement_unit,
-        timestamp=timestamp or datetime.now(),
+        timestamp=timestamp,
     )
 
 
