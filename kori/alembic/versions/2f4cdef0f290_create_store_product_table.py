@@ -23,8 +23,8 @@ def upgrade() -> None:
         "store_product",
         sa.Column("product_id", UUID(as_uuid=True), nullable=False, primary_key=True),
         sa.Column("store_id", UUID(as_uuid=True), nullable=False, primary_key=True),
-        sa.Column("stock_available", sa.Integer(), nullable=False),
-        sa.Column("stock_locked", sa.Integer(), nullable=False, default=0),
+        sa.Column("stock_available", sa.Numeric(10, 3), nullable=False),
+        sa.Column("stock_locked", sa.Numeric(10, 3), nullable=False, default=0),
         sa.ForeignKeyConstraint(("product_id",), ["product.id"]),
         sa.ForeignKeyConstraint(("store_id",), ["store.id"]),
     )

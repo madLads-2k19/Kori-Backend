@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class StoreProductBase(BaseModel):
     product_id: UUID
     store_id: UUID
-    stock_available: int
+    stock_available: float
 
 
 class StoreProductCreate(StoreProductBase):
@@ -18,7 +18,7 @@ class StoreProductUpdate(StoreProductBase):
 
 
 class StoreProductSchema(StoreProductBase):
-    stock_locked: int
+    stock_locked: float
 
     class Config:
         orm_mode = True
