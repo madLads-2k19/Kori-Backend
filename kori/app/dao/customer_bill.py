@@ -2,6 +2,7 @@ import decimal
 import uuid
 
 from kori.app.core.config import Settings
+from kori.app.core.exceptions import StockLevelException
 from kori.app.db.connection import DbConnector
 from kori.app.models import Customer, CustomerBill, ProductBilled, StoreProduct
 from kori.app.schemas.customer_bill import CustomerBillDbCreate, CustomerBillSchema
@@ -33,7 +34,11 @@ def create_customer_bill(
             store_product_db: StoreProduct = session.query(StoreProduct).get(
                 (product_billed_create.product_id, customer_bill_db_create.store_id)
             )
-            store_product_db.stock_available -= decimal.Decimal(product_billed_create.product_quantity)
+
+            billed_quantity_decimal = decimal.Decimal(product_billed_create.product_quantity)
+            if billed_quantity_decimal > store_product_db.stock_available:
+                raise StockLevelException()
+            store_product_db.stock_available -= billed_quantity_decimal
 
         # Increment customer membership points
         customer_db: Customer = session.query(Customer).get(customer_bill_db_create.customer_id)
