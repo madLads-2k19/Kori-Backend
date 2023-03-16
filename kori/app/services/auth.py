@@ -18,15 +18,15 @@ def create_access_token(user: UserSchema, expiry_duration: timedelta | None = No
     if expiry_duration:
         expiry = datetime.utcnow() + expiry_duration
     else:
-        expiry = datetime.utcnow() + timedelta(minutes=int(config.access_token_expire_minutes))
+        expiry = datetime.utcnow() + timedelta(minutes=int(config.ACCESS_TOKEN_EXPIRE_MINUTES))
     token_data = TokenData(user_id=str(user.id), org_id=str(user.org_id), exp=int(expiry.timestamp()))
-    encoded_jwt = jwt.encode(token_data.dict(), config.secret_key, algorithm=config.algorithm)
+    encoded_jwt = jwt.encode(token_data.dict(), config.SECRET_KEY, algorithm=config.ALGORITHM)
     return encoded_jwt
 
 
 def verify_access_token(access_token: str) -> UserSchema:
     try:
-        payload = jwt.decode(access_token, config.secret_key, algorithms=[config.algorithm])
+        payload = jwt.decode(access_token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
         token_data = TokenData.parse_obj(payload)
     except (JWTError, ValidationError):
         raise AuthException(message="Invalid token detected")
