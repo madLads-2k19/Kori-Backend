@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column("product_id", UUID(as_uuid=True), nullable=False, primary_key=True),
         sa.Column("version_id", sa.Integer(), nullable=False, primary_key=True),
         sa.Column("name", sa.String(128), nullable=False),
-        sa.Column("price", sa.Numeric(4), nullable=False),
+        sa.Column("price", sa.Numeric(10, 3), nullable=False),
         sa.Column("measurement_unit", sa.String(16), nullable=False),
         sa.Column("valid_from", sa.types.TIMESTAMP, nullable=False),
         sa.Column("valid_to", sa.types.TIMESTAMP, nullable=True),
