@@ -46,8 +46,8 @@ app.include_router(
 
 app.include_router(
     user_router,
-    prefix="/store/v1",
-    tags=["Store API V1"],
+    prefix="/user/v1",
+    tags=["User API V1"],
 )
 
 app.include_router(customer_bill_router, prefix="/customer_bill/v1", tags=["Customer Bill API V1"])
