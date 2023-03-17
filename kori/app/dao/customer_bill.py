@@ -1,12 +1,12 @@
 import decimal
-import uuid
+from uuid import UUID, uuid4
 
 from kori.app.core.config import Settings
 from kori.app.core.exceptions import StockLevelException
 from kori.app.db.connection import DbConnector
 from kori.app.models import Customer, CustomerBill, ProductBilled, StoreProduct
 from kori.app.schemas.customer_bill import CustomerBillDbCreate, CustomerBillSchema
-from kori.app.schemas.product_billed import ProductBilledDbCreate
+from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilledSchema
 
 settings = Settings()
 
@@ -21,7 +21,7 @@ def create_customer_bill(
 ):
     with session.begin() as transaction:
         # Insert the bill
-        customer_bill_id = uuid.uuid4()
+        customer_bill_id = uuid4()
         customer_bill_db = CustomerBill(**customer_bill_db_create.dict(), id=customer_bill_id)
         session.add(customer_bill_db)
 
@@ -48,3 +48,8 @@ def create_customer_bill(
         transaction.commit()
 
     return CustomerBillSchema.from_orm(customer_bill_db)
+
+
+def get_customer_bill(customer_bill_id: UUID) -> CustomerBillSchema | None:
+    customer_bill = session.query(CustomerBill).get(customer_bill_id)
+    return CustomerBillSchema.from_orm(customer_bill) if customer_bill else None
