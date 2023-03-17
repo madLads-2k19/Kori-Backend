@@ -19,3 +19,8 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
         raise ForbiddenException()
 
     return customer_bill_service.create_customer_bill(organization_id, bill_request)
+
+
+@customer_bill_router.get(BASE + "/{customer_bill_id}", response_model=CustomerBillSchema)
+def get_customer_bill(organization_id: UUID, customer_bill_id: UUID) -> CustomerBillSchema:
+    return customer_bill_service.get_customer_bill(organization_id, customer_bill_id)

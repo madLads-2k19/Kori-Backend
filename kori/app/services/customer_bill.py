@@ -3,6 +3,7 @@ from uuid import UUID
 
 import kori.app.dao.customer_bill as customer_bill_dao
 import kori.app.dao.global_config as global_config_dao
+from kori.app.core.exceptions import ForbiddenException, NotFoundException
 from kori.app.schemas.customer_bill import CustomerBillCreate, CustomerBillDbCreate, CustomerBillSchema
 from kori.app.schemas.product import ProductSchema
 from kori.app.schemas.product_billed import ProductBilledDbCreate
@@ -39,3 +40,14 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
     points = (products_total * float(org_points_config.value)) / 100.0
 
     return customer_bill_dao.create_customer_bill(customer_bill_db_create, product_billed_db_create_list, points)
+
+
+def get_customer_bill(organization_id: UUID, customer_bill_id: UUID) -> CustomerBillSchema:
+    customer_bill = customer_bill_dao.get_customer_bill(customer_bill_id)
+    if not customer_bill:
+        raise NotFoundException()
+
+    if customer_bill.org_id != organization_id:
+        raise ForbiddenException()
+
+    return customer_bill
