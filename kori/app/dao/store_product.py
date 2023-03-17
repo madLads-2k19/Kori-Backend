@@ -37,9 +37,15 @@ def get_store_product(store_id: UUID, product_id: UUID) -> StoreProductSchema | 
     return StoreProductSchema.from_orm(store_products[0]) if len(store_products) > 0 else None
 
 
-def get_all_store_products(store_id) -> list[StoreProductSchema]:
+def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductSchema]:
     session = db_connector.get_session()
     store_products = list(session.query(StoreProduct).filter(StoreProduct.store_id == store_id))
+    return [StoreProductSchema.from_orm(store_product) for store_product in store_products]
+
+
+def get_all_store_products_of_products(product_id: UUID) -> list[StoreProductSchema]:
+    session = db_connector.get_session()
+    store_products = list(session.query(StoreProduct).filter(StoreProduct.product_id == product_id))
     return [StoreProductSchema.from_orm(store_product) for store_product in store_products]
 
 
