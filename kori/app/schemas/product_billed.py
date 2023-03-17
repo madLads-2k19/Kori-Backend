@@ -19,3 +19,6 @@ class ProductBilledDbCreate(ProductBilledBase):
 
 class ProductBilledSchema(ProductBilledDbCreate):
     customer_bill_id: UUID
+
+    class Config:
+        orm_mode = True
