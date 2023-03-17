@@ -33,6 +33,18 @@ def get_customer_by_id(customer_id: UUID) -> CustomerSchema | None:
     return CustomerSchema.from_orm(customer) if customer else None
 
 
+def get_customers_in_org(
+    org_id: UUID, customer_name: str | None = None, phone_number: str | None = None
+) -> list[CustomerSchema]:
+    session = db_connector.get_session()
+    customers = session.query(Customer).filter(Customer.org_id == org_id)
+    if phone_number:
+        customers = customers.filter(Customer.phone_number.like(f"%{phone_number}%"))
+    if customer_name:
+        customers = customers.filter(Customer.name.like(f"%{customer_name}%"))
+    return [CustomerSchema.from_orm(customer) for customer in customers]
+
+
 def get_customer_by_number(phone_number: str) -> CustomerSchema | None:
     session = db_connector.get_session()
     customer = session.query(Customer).filter(Customer.phone_number == phone_number).one_or_none()

@@ -17,6 +17,12 @@ def get_customer_by_id(customer_id: UUID) -> CustomerSchema:
     return customer
 
 
+def get_customers_in_org(
+    org_id: UUID, customer_name: str | None = None, phone_number: str | None = None
+) -> list[CustomerSchema]:
+    return customer_dao.get_customers_in_org(org_id, customer_name, phone_number)
+
+
 def get_customer_by_number(phone_number: str) -> CustomerSchema:
     customer = customer_dao.get_customer_by_number(phone_number)
     if not customer:

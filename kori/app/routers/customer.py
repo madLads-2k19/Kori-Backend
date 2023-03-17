@@ -20,6 +20,11 @@ def get_customer_by_id(customer_id: UUID) -> CustomerSchema:
     return customer_service.get_customer_by_id(customer_id)
 
 
+@customer_router.get("/org/{org_id}", response_model=list[CustomerSchema])
+def get_customers_in_org(org_id: UUID, customer_name: str | None = None, phone_number: str | None = None):
+    return customer_service.get_customers_in_org(org_id, customer_name, phone_number)
+
+
 @customer_router.get("/number/{phone_number}", response_model=CustomerSchema)
 def get_customer_by_phone_number(phone_number: str) -> CustomerSchema:
     return customer_service.get_customer_by_number(phone_number)
