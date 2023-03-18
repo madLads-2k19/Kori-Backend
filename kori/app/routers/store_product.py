@@ -7,7 +7,12 @@ import kori.app.dao.store as store_dao
 import kori.app.dao.store_product as store_product_dao
 from kori.app.core.config import Settings
 from kori.app.core.exceptions import ForbiddenException
-from kori.app.schemas.store_product import StoreProductCreate, StoreProductSchema, StoreProductUpdate
+from kori.app.schemas.store_product import (
+    StoreProductCreate,
+    StoreProductSchema,
+    StoreProductUpdate,
+    StoreProductWithProduct,
+)
 
 store_product_router = APIRouter()
 settings = Settings()
@@ -35,8 +40,8 @@ def get_store_product(organization_id: UUID, store_id: UUID, product_id: UUID) -
     return store_product_dao.get_store_product(store_id, product_id)
 
 
-@store_product_router.get(BASE + "/store/{store_id}", response_model=list[StoreProductSchema])
-def get_all_store_products_of_store(organization_id: UUID, store_id: UUID) -> list[StoreProductSchema]:
+@store_product_router.get(BASE + "/store/{store_id}", response_model=list[StoreProductWithProduct])
+def get_all_store_products_of_store(organization_id: UUID, store_id: UUID) -> list[StoreProductWithProduct]:
     store = store_dao.get_store_by_id(organization_id, store_id)
     if store is None:
         raise ForbiddenException()
@@ -51,20 +56,6 @@ def get_all_store_products_of_product(organization_id: UUID, product_id: UUID) -
         raise ForbiddenException()
 
     return store_product_dao.get_all_store_products_of_products(product_id)
-
-
-@store_product_router.put(BASE + "/{store_id}/{product_id}", response_model=StoreProductSchema)
-def update_store_product(
-    organization_id: UUID, store_id: UUID, product_id: UUID, store_product_update: StoreProductUpdate
-) -> StoreProductSchema:
-    if store_id != store_product_update.store_id or product_id != store_product_update.product_id:
-        raise ForbiddenException()
-
-    store = store_dao.get_store_by_id(organization_id, store_id)
-    if store is None:
-        raise ForbiddenException()
-
-    return store_product_dao.update(store_id, product_id, store_product_update)
 
 
 @store_product_router.delete(BASE + "/{store_id}/{product_id}")

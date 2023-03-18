@@ -6,10 +6,17 @@ from sqlalchemy.exc import IntegrityError
 
 from kori.app.core.config import Settings
 from kori.app.core.exceptions import DuplicateRecordException, NotFoundException, StockLevelException
+from kori.app.dao.product import get_product
 from kori.app.db.connection import DbConnector
 from kori.app.models import Product, ProductVersion, StoreProduct
 from kori.app.schemas.product import ProductWithStock
-from kori.app.schemas.store_product import AggregatedProduct, StoreProductCreate, StoreProductSchema, StoreProductUpdate
+from kori.app.schemas.store_product import (
+    AggregatedProduct,
+    StoreProductCreate,
+    StoreProductSchema,
+    StoreProductUpdate,
+    StoreProductWithProduct,
+)
 from kori.app.utils.dict_utils import remove_null_values
 
 settings = Settings()
@@ -50,10 +57,18 @@ def get_products_by_stores(store_ids: list[UUID]) -> list[AggregatedProduct]:
     return [AggregatedProduct(product_id=entry[0], total_stock=entry[1]) for entry in result]
 
 
-def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductSchema]:
+def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductWithProduct]:
     session = db_connector.get_session()
-    store_products = list(session.query(StoreProduct).filter(StoreProduct.store_id == store_id))
-    return [StoreProductSchema.from_orm(store_product) for store_product in store_products]
+    store_products = list(
+        session.query(StoreProduct).filter(StoreProduct.store_id == store_id, StoreProduct.stock_available > 0)
+    )
+
+    store_product_schema_list = [StoreProductSchema.from_orm(store_product) for store_product in store_products]
+
+    return [
+        StoreProductWithProduct(**store_product.dict(), product=get_product(store_product.product_id))
+        for store_product in store_product_schema_list
+    ]
 
 
 def get_all_store_products_of_products(product_id: UUID) -> list[StoreProductSchema]:

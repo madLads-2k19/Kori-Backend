@@ -2,6 +2,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from kori.app.schemas.product import ProductSchema
+
 
 class StoreProductBase(BaseModel):
     product_id: UUID
@@ -22,6 +24,10 @@ class StoreProductSchema(StoreProductBase):
 
     class Config:
         orm_mode = True
+
+
+class StoreProductWithProduct(StoreProductSchema):
+    product: ProductSchema
 
 
 class AggregatedProduct(BaseModel):
