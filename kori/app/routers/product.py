@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 import kori.app.services.product as product_service
 from kori.app.core.config import Settings
@@ -22,8 +22,10 @@ def get_product_by_id(product_id: UUID, timestamp: Optional[datetime] = None) ->
     return product_service.get_product(product_id=product_id, timestamp=timestamp)
 
 
-@product_router.post("/stores/", response_model=list[ProductWithStock])
-def get_products_by_stores(store_ids: list[UUID], product_name: str | None = None) -> list[ProductWithStock]:
+@product_router.get("/stores/", response_model=list[ProductWithStock])
+def get_products_by_stores(
+    store_ids: list[UUID] = Query(...), product_name: str | None = None
+) -> list[ProductWithStock]:
     return product_service.get_products_by_stores(store_ids, product_name)
 
 
