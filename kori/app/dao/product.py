@@ -94,6 +94,35 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> Produ
     )
 
 
+def get_products_by_name(product_ids: list[UUID], product_name: str | None = None) -> list[ProductSchema]:
+    session = db_connector.get_session()
+    current_timestamp = datetime.now()
+    product_versions = session.query(ProductVersion).filter(
+        ProductVersion.product_id.in_(product_ids),
+        ProductVersion.valid_from < current_timestamp,
+        current_timestamp <= ProductVersion.valid_to,
+    )
+    if product_name:
+        product_versions = product_versions.filter(ProductVersion.name.like(f"%{product_name}%"))
+
+    products = []
+    for product_version in product_versions:
+        product = product_version.product
+        products.append(
+            ProductSchema(
+                reorder_level=product.reorder_level,
+                name=product_version.name,
+                price=product_version.price,
+                measurement_unit=product_version.measurement_unit,
+                org_id=product.org_id,
+                product_id=product.id,
+                version_id=product_version.version_id,
+                timestamp=current_timestamp,
+            )
+        )
+    return products
+
+
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
     session = db_connector.get_session()
     try:
