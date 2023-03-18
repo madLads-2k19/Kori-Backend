@@ -58,6 +58,20 @@ def get_all_store_products_of_product(organization_id: UUID, product_id: UUID) -
     return store_product_dao.get_all_store_products_of_products(product_id)
 
 
+@store_product_router.put(BASE + "/{store_id}/{product_id}", response_model=StoreProductSchema)
+def update_store_product(
+    organization_id: UUID, store_id: UUID, product_id: UUID, store_product_update: StoreProductUpdate
+) -> StoreProductSchema:
+    if store_id != store_product_update.store_id or product_id != store_product_update.product_id:
+        raise ForbiddenException()
+
+    store = store_dao.get_store_by_id(organization_id, store_id)
+    if store is None:
+        raise ForbiddenException()
+
+    return store_product_dao.update(store_id, product_id, store_product_update)
+
+
 @store_product_router.delete(BASE + "/{store_id}/{product_id}")
 def delete_store(organization_id: UUID, store_id: UUID, product_id: UUID):
     store = store_dao.get_store_by_id(organization_id, store_id)
