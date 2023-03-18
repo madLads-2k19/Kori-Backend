@@ -34,9 +34,9 @@ def get_user_by_id(user_id: UUID) -> UserSchema | None:
         return UserSchema.from_orm(fetched_user)
 
 
-def get_user_by_email(org_id: UUID, email: EmailStr) -> UserSchema | None:
+def get_user_by_email(email: EmailStr) -> UserSchema | None:
     session = db_connector.get_session()
-    fetched_user = session.query(User).filter(User.org_id == org_id, User.email == email).one_or_none()
+    fetched_user = session.query(User).filter(User.email == email).one_or_none()
     if fetched_user:
         return UserSchema.from_orm(fetched_user)
 

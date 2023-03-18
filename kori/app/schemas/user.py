@@ -49,3 +49,9 @@ class TokenData(BaseModel):
     user_id: str
     org_id: str
     exp: int | None
+
+
+class AuthResponse(BaseModel):
+    org_id: UUID
+    user_id: UUID
+    token: str

@@ -22,8 +22,8 @@ def get_user_by_id(user_id: UUID) -> UserSchema:
     return user
 
 
-def get_user_by_email(org_id: UUID, email: EmailStr) -> UserSchema:
-    user = user_dao.get_user_by_email(org_id, email)
+def get_user_by_email(email: EmailStr) -> UserSchema:
+    user = user_dao.get_user_by_email(email)
     if not user:
         raise NotFoundException(message="User not found")
     return user
