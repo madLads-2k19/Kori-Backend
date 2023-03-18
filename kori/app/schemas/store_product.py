@@ -22,3 +22,8 @@ class StoreProductSchema(StoreProductBase):
 
     class Config:
         orm_mode = True
+
+
+class AggregatedProduct(BaseModel):
+    product_id: UUID
+    total_stock: float
