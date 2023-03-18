@@ -1,11 +1,14 @@
+from datetime import datetime
 from uuid import UUID
 
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 
 from kori.app.core.config import Settings
 from kori.app.core.exceptions import DuplicateRecordException, NotFoundException, StockLevelException
 from kori.app.db.connection import DbConnector
-from kori.app.models import Organization, Store, StoreProduct
+from kori.app.models import Product, ProductVersion, StoreProduct
+from kori.app.schemas.product import ProductWithStock
 from kori.app.schemas.store_product import StoreProductCreate, StoreProductSchema, StoreProductUpdate
 from kori.app.utils.dict_utils import remove_null_values
 
@@ -35,6 +38,39 @@ def get_store_product(store_id: UUID, product_id: UUID) -> StoreProductSchema | 
     )
 
     return StoreProductSchema.from_orm(store_products[0]) if len(store_products) > 0 else None
+
+
+def get_products_by_stores(store_ids: list[UUID], product_name: str | None = None) -> list[ProductWithStock]:
+    session = db_connector.get_session()
+    current_timestamp = datetime.now()
+    result = (
+        session.query(StoreProduct.product_id, func.sum(StoreProduct.stock_available), ProductVersion)
+        .filter(StoreProduct.store_id.in_(store_ids))
+        .group_by(StoreProduct.product_id, ProductVersion.product_id, ProductVersion.version_id)
+        .join(ProductVersion, ProductVersion.product_id == StoreProduct.product_id)
+        .filter(ProductVersion.valid_from <= current_timestamp, current_timestamp < ProductVersion.valid_to)
+    )
+    if product_name:
+        result = result.filter(ProductVersion.name.like(f"%{product_name}%"))
+
+    products = []
+    for entry in result:
+        product_id, total_stock, product_version = entry
+        product = product_version.product
+        products.append(
+            ProductWithStock(
+                reorder_level=product.reorder_level,
+                name=product_version.name,
+                price=product_version.price,
+                measurement_unit=product_version.measurement_unit,
+                org_id=product.org_id,
+                product_id=product_id,
+                version_id=product_version.version_id,
+                timestamp=current_timestamp,
+                total_stock=total_stock,
+            )
+        )
+    return products
 
 
 def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductSchema]:

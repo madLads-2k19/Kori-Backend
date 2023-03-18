@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 import kori.app.services.product as product_service
 from kori.app.core.config import Settings
-from kori.app.schemas.product import ProductCreateRequest, ProductSchema, ProductUpdate
+from kori.app.schemas.product import ProductCreateRequest, ProductSchema, ProductUpdate, ProductWithStock
 
 product_router = APIRouter()
 settings = Settings()
@@ -20,6 +20,11 @@ def create_product(org_id: UUID, product_data: ProductCreateRequest) -> ProductS
 @product_router.get("/{product_id}", response_model=ProductSchema)
 def get_product_by_id(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
     return product_service.get_product(product_id=product_id, timestamp=timestamp)
+
+
+@product_router.post("/stores/", response_model=list[ProductWithStock])
+def get_products_by_stores(store_ids: list[UUID], product_name: str | None = None) -> list[ProductWithStock]:
+    return product_service.get_products_by_stores(store_ids, product_name)
 
 
 @product_router.put("/{product_id}", response_model=ProductSchema)

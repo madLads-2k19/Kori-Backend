@@ -3,7 +3,8 @@ from typing import Optional
 from uuid import UUID
 
 import kori.app.dao.product as product_dao
-from kori.app.schemas.product import ProductCreate, ProductCreateRequest, ProductSchema, ProductUpdate
+import kori.app.dao.store_product as store_product_dao
+from kori.app.schemas.product import ProductCreate, ProductCreateRequest, ProductSchema, ProductUpdate, ProductWithStock
 
 
 def create(org_id: UUID, product_data: ProductCreateRequest) -> ProductSchema:
@@ -13,6 +14,10 @@ def create(org_id: UUID, product_data: ProductCreateRequest) -> ProductSchema:
 
 def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
     return product_dao.get_product(product_id=product_id, timestamp=timestamp)
+
+
+def get_products_by_stores(store_ids: list[UUID], product_name: str | None = None) -> list[ProductWithStock]:
+    return store_product_dao.get_products_by_stores(store_ids, product_name)
 
 
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
