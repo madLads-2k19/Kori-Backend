@@ -1,0 +1,16 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [opened, synchronize]
+
+  workflow_dispatch:
+
+jobs:
+  pr-check-workflow:
+    uses: madLads-2k19/ci-cd-actions/.github/workflows/check-pr.yaml@master
+    with:
+      py-module: kori
+      python-version: 3.10.9

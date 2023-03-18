@@ -15,6 +15,6 @@ jobs:
       contents: read
       packages: write
     with:
-      app-name: kori
+      app-name: kori-backend
       app-environment: production
       py-module: kori
