@@ -39,7 +39,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
             session.add(new_product_version_db)
             transaction.commit()
         except IntegrityError:
-            raise NotFoundException(message="Organisation not found.")
+            raise NotFoundException(message="Organization not found.")
         except Exception:
             transaction.rollback()
 
@@ -54,7 +54,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
     )
 
 
-def get_products_by_organisation(org_id: UUID) -> list[ProductSchema]:
+def get_products_by_organization(org_id: UUID) -> list[ProductSchema]:
     session = db_connector.get_session()
     current_timestamp = datetime.now()
 
