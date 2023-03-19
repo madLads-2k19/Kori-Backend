@@ -16,6 +16,10 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> Produ
     return product_dao.get_product(product_id=product_id, timestamp=timestamp)
 
 
+def get_products_by_organisation(org_id: UUID) -> list[ProductSchema]:
+    return product_dao.get_products_by_organisation(org_id=org_id)
+
+
 def get_products_by_stores(store_ids: list[UUID], product_name: str | None = None) -> list[ProductWithStock]:
     aggregated_products = store_product_dao.get_products_by_stores(store_ids)
     stock_mapping = {product.product_id: product.total_stock for product in aggregated_products}

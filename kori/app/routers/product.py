@@ -17,6 +17,11 @@ def create_product(org_id: UUID, product_data: ProductCreateRequest) -> ProductS
     return product_service.create(org_id=org_id, product_data=product_data)
 
 
+@product_router.get("/{org_id}", response_model=list[ProductSchema])
+def get_product_by_organisation_id(org_id: UUID) -> list[ProductSchema]:
+    return product_service.get_products_by_organisation(org_id=org_id)
+
+
 @product_router.get("/{product_id}", response_model=ProductSchema)
 def get_product_by_id(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
     return product_service.get_product(product_id=product_id, timestamp=timestamp)

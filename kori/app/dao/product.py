@@ -54,8 +54,39 @@ def create(product_data: ProductCreate) -> ProductSchema:
     )
 
 
-def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
+def get_products_by_organisation(org_id: UUID) -> list[ProductSchema]:
+    session = db_connector.get_session()
+    current_timestamp = datetime.now()
 
+    product_list = session.query(Product).filter(Product.org_id == org_id)
+
+    response_product_list = []
+    for product in product_list:
+        product_version = (
+            session.query(ProductVersion)
+            .filter(
+                ProductVersion.product_id == product.id,
+                ProductVersion.valid_from <= current_timestamp,
+                ProductVersion.valid_to >= current_timestamp,
+            )
+            .one()
+        )
+        response_product_list.append(
+            ProductSchema(
+                product_id=product.id,
+                reorder_level=product.reorder_level,
+                version_id=product_version.version_id,
+                org_id=product.org_id,
+                name=product_version.name,
+                price=product_version.price,
+                measurement_unit=product_version.measurement_unit,
+            )
+        )
+
+    return response_product_list
+
+
+def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> ProductSchema:
     if not timestamp:
         timestamp = datetime.now()
 
@@ -169,7 +200,6 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
         updated_product_version_data[k] != getattr(latest_product_version, k)
         for k in ["name", "measurement_unit", "price"]
     ):
-
         # Create a new version of the product with updated version_id
         new_product_version_db = ProductVersion(
             version_id=latest_product_version.version_id + 1,
