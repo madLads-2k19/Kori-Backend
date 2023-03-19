@@ -58,7 +58,7 @@ def get_products_by_organization(org_id: UUID) -> list[ProductSchema]:
     session = db_connector.get_session()
     current_timestamp = datetime.now()
 
-    product_list = session.query(Product).filter(Product.org_id == org_id)
+    product_list = session.query(Product).filter(Product.org_id == org_id, Product.is_deleted == False)
 
     response_product_list = []
     for product in product_list:
