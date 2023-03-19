@@ -18,7 +18,13 @@ def signup(org_id: UUID, user_create_request: UserCreateRequest) -> AuthResponse
     new_user = user_service.create(org_id, user_create_request)
     access_token = auth_service.create_access_token(new_user)
     return AuthResponse(
-        org_id=new_user.org_id, user_id=new_user.id, permission_level=new_user.permission_level, token=access_token
+        name=new_user.name,
+        email=new_user.email,
+        permission_level=new_user.permission_level,
+        default_store_id=new_user.default_store_id,
+        org_id=new_user.org_id,
+        user_id=new_user.id,
+        token=access_token,
     )
 
 
@@ -31,9 +37,12 @@ def login(login_request: UserLoginRequest) -> AuthResponse:
         raise AuthException(message="Invalid password")
     access_token = auth_service.create_access_token(existing_user)
     return AuthResponse(
+        name=existing_user.name,
+        email=existing_user.email,
+        permission_level=existing_user.permission_level,
+        default_store_id=existing_user.default_store_id,
         org_id=existing_user.org_id,
         user_id=existing_user.id,
-        permission_level=existing_user.permission_level,
         token=access_token,
     )
 

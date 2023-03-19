@@ -14,6 +14,8 @@ class User(Base):
     email = Column(String)
     pass_hash = Column(LargeBinary)
     permission_level = Column(String)
+    default_store_id = Column(ForeignKey("store.id"))
 
     organization = relationship("Organization", back_populates="users")
     customer_bills = relationship("CustomerBill", back_populates="user")
+    default_store = relationship("Store", back_populates="users")

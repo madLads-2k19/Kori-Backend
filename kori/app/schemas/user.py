@@ -8,6 +8,7 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     permission_level: str
+    default_store_id: UUID | None
 
 
 class UserLoginRequest(BaseModel):
@@ -23,6 +24,7 @@ class UserUpdateBase(BaseModel):
     name: str | None
     email: EmailStr | None
     permission_level: str | None
+    default_store_id: UUID | None
 
 
 class UserUpdateRequest(UserUpdateBase):
@@ -51,8 +53,7 @@ class TokenData(BaseModel):
     exp: int | None
 
 
-class AuthResponse(BaseModel):
+class AuthResponse(UserBase):
     org_id: UUID
     user_id: UUID
-    permission_level: str
     token: str

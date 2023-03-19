@@ -15,3 +15,4 @@ class Store(Base):
     organization = relationship("Organization", back_populates="stores")
     customer_bills = relationship("CustomerBill", back_populates="store")
     store_products = relationship("StoreProduct", back_populates="store")
+    users = relationship("User", back_populates="default_store")
