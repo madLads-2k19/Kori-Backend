@@ -11,7 +11,6 @@ from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilled
 settings = Settings()
 
 db_connector = DbConnector(settings.DATABASE_URI)
-session = db_connector.get_session()
 
 
 def create_customer_bill(
@@ -19,6 +18,7 @@ def create_customer_bill(
     product_billed_db_create_list: list[ProductBilledDbCreate],
     points: float,
 ):
+    session = db_connector.get_session()
     with session.begin() as transaction:
         # Insert the bill
         customer_bill_id = uuid4()
@@ -51,5 +51,6 @@ def create_customer_bill(
 
 
 def get_customer_bill(customer_bill_id: UUID) -> CustomerBillSchema | None:
+    session = db_connector.get_session()
     customer_bill = session.query(CustomerBill).get(customer_bill_id)
     return CustomerBillSchema.from_orm(customer_bill) if customer_bill else None
