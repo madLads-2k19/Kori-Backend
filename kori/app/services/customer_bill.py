@@ -83,7 +83,7 @@ def get_customer_bill(organization_id: UUID, customer_bill_id: UUID) -> Customer
         delivery_address=customer_bill.delivery_address,
         delivery_charge=customer_bill.delivery_charge,
         products_total=customer_bill.products_total,
-        net_price=customer_bill.products_total,
+        net_price=customer_bill.net_price,
         billed_at=customer_bill.billed_at,
         id=customer_bill.id,
         products_billed=products_billed_with_product,
