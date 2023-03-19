@@ -27,7 +27,6 @@ class ProductCreate(ProductCreateRequest):
 class ProductSchema(ProductCreate):
     product_id: UUID
     version_id: int
-    timestamp: datetime
 
 
 class ProductWithStock(ProductSchema):

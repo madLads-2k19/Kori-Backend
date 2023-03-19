@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from kori.app.schemas.product_billed import ProductBilledCreate, ProductBilledSchema
+from kori.app.schemas.product_billed import ProductBilledCreate, ProductBilledSchema, ProductBilledWithProduct
 
 
 class CustomerBillBase(BaseModel):
@@ -33,3 +33,8 @@ class CustomerBillSchema(CustomerBillDbCreate):
 
     class Config:
         orm_mode = True
+
+
+class CustomerBillWithProducts(CustomerBillDbCreate):
+    id: UUID
+    products_billed: list[ProductBilledWithProduct]
