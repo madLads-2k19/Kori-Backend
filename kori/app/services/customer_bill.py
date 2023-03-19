@@ -3,10 +3,16 @@ from uuid import UUID
 
 import kori.app.dao.customer_bill as customer_bill_dao
 import kori.app.dao.global_config as global_config_dao
+import kori.app.dao.product as product_dao
 from kori.app.core.exceptions import ForbiddenException, NotFoundException
-from kori.app.schemas.customer_bill import CustomerBillCreate, CustomerBillDbCreate, CustomerBillSchema
+from kori.app.schemas.customer_bill import (
+    CustomerBillCreate,
+    CustomerBillDbCreate,
+    CustomerBillSchema,
+    CustomerBillWithProducts,
+)
 from kori.app.schemas.product import ProductSchema
-from kori.app.schemas.product_billed import ProductBilledDbCreate
+from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilledWithProduct
 from kori.app.services.product import get_product
 
 
@@ -42,12 +48,40 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
     return customer_bill_dao.create_customer_bill(customer_bill_db_create, product_billed_db_create_list, points)
 
 
-def get_customer_bill(organization_id: UUID, customer_bill_id: UUID) -> CustomerBillSchema:
+def get_customer_bill(organization_id: UUID, customer_bill_id: UUID) -> CustomerBillWithProducts:
     customer_bill = customer_bill_dao.get_customer_bill(customer_bill_id)
+
     if not customer_bill:
         raise NotFoundException()
-
     if customer_bill.org_id != organization_id:
         raise ForbiddenException()
 
-    return customer_bill
+    products_billed = customer_bill.products_billed
+    products_billed_with_product = []
+    for product_billed in products_billed:
+        product = product_dao.get_product_by_version_id(product_billed.product_id, product_billed.version_id)
+        products_billed_with_product.append(
+            ProductBilledWithProduct(
+                reorder_level=product.reorder_level,
+                name=product.name,
+                price=product.price,
+                measurement_unit=product.measurement_unit,
+                product_id=product.product_id,
+                product_quantity=product_billed.product_quantity,
+                total_cost=product_billed.total_cost,
+                version_id=product_billed.version_id,
+            )
+        )
+
+    return CustomerBillWithProducts(
+        org_id=organization_id,
+        store_id=customer_bill.store_id,
+        customer_id=customer_bill.customer_id,
+        user_id=customer_bill.user_id,
+        payment_method=customer_bill.payment_method,
+        products_total=customer_bill.products_total,
+        net_price=customer_bill.products_total,
+        billed_at=customer_bill.billed_at,
+        id=customer_bill.id,
+        products_billed=products_billed_with_product,
+    )

@@ -51,7 +51,6 @@ def create(product_data: ProductCreate) -> ProductSchema:
         name=new_product_version_db.name,
         price=new_product_version_db.price,
         measurement_unit=new_product_version_db.measurement_unit,
-        timestamp=datetime.now(),
     )
 
 
@@ -90,7 +89,6 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> Produ
         name=product_version.name,
         price=product_version.price,
         measurement_unit=product_version.measurement_unit,
-        timestamp=timestamp,
     )
 
 
@@ -117,10 +115,28 @@ def get_products_by_name(product_ids: list[UUID], product_name: str | None = Non
                 org_id=product.org_id,
                 product_id=product.id,
                 version_id=product_version.version_id,
-                timestamp=current_timestamp,
             )
         )
     return products
+
+
+def get_product_by_version_id(product_id: UUID, version_id: int) -> ProductSchema | None:
+    session = db_connector.get_session()
+    product_version = (
+        session.query(ProductVersion)
+        .filter(ProductVersion.product_id == product_id, ProductVersion.version_id == version_id)
+        .one_or_none()
+    )
+    product = product_version.product
+    return ProductSchema(
+        reorder_level=product.reorder_level,
+        name=product_version.name,
+        price=product_version.price,
+        measurement_unit=product_version.measurement_unit,
+        org_id=product.org_id,
+        product_id=product.id,
+        version_id=product_version.version_id,
+    )
 
 
 def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
@@ -173,7 +189,6 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
         reorder_level=existing_product.reorder_level,
         version_id=version_id,
         org_id=existing_product.org_id,
-        timestamp=datetime.now(),
         **updated_product_version_data,
     )
 
