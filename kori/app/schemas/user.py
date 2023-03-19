@@ -54,4 +54,5 @@ class TokenData(BaseModel):
 class AuthResponse(BaseModel):
     org_id: UUID
     user_id: UUID
+    permission_level: str
     token: str

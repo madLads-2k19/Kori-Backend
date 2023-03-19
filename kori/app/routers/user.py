@@ -17,7 +17,9 @@ config = Settings()
 def signup(org_id: UUID, user_create_request: UserCreateRequest) -> AuthResponse:
     new_user = user_service.create(org_id, user_create_request)
     access_token = auth_service.create_access_token(new_user)
-    return AuthResponse(org_id=new_user.org_id, user_id=new_user.id, token=access_token)
+    return AuthResponse(
+        org_id=new_user.org_id, user_id=new_user.id, permission_level=new_user.permission_level, token=access_token
+    )
 
 
 @user_router.post("/login", response_model=AuthResponse)
@@ -28,7 +30,12 @@ def login(login_request: UserLoginRequest) -> AuthResponse:
     if not verify_password(login_request.password, existing_user.pass_hash):
         raise AuthException(message="Invalid password")
     access_token = auth_service.create_access_token(existing_user)
-    return AuthResponse(org_id=existing_user.org_id, user_id=existing_user.id, token=access_token)
+    return AuthResponse(
+        org_id=existing_user.org_id,
+        user_id=existing_user.id,
+        permission_level=existing_user.permission_level,
+        token=access_token,
+    )
 
 
 @user_router.get("/{org_id}", response_model=UserSchema)
