@@ -18,8 +18,8 @@ def create_product(org_id: UUID, product_data: ProductCreateRequest) -> ProductS
 
 
 @product_router.get("/organization/{org_id}", response_model=list[ProductSchema])
-def get_product_by_organisation_id(org_id: UUID) -> list[ProductSchema]:
-    return product_service.get_products_by_organisation(org_id=org_id)
+def get_product_by_organization_id(org_id: UUID) -> list[ProductSchema]:
+    return product_service.get_products_by_organization(org_id=org_id)
 
 
 @product_router.get("/{product_id}", response_model=ProductSchema)
