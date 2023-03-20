@@ -1,13 +1,18 @@
-from datetime import datetime
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
 
 
+class PermissionLevel(str, Enum):
+    user = "user"
+    admin = "admin"
+
+
 class UserBase(BaseModel):
     name: str
     email: EmailStr
-    permission_level: str
+    permission_level: PermissionLevel
     default_store_id: UUID | None
 
 
@@ -23,7 +28,7 @@ class UserCreateRequest(UserBase):
 class UserUpdateBase(BaseModel):
     name: str | None
     email: EmailStr | None
-    permission_level: str | None
+    permission_level: PermissionLevel | None
     default_store_id: UUID | None
 
 
