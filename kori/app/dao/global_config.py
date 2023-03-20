@@ -13,7 +13,10 @@ config = Settings()
 db_connector = DbConnector(config.DATABASE_URI)
 
 
-POINTS_PERCENTAGE_CONFIG_TYPE = "BILL_POINTS_PERCENT"
+POINTS_PERCENTAGE_CONFIG = "BILL_POINTS_PERCENT"
+FREE_DELIVERY_CONFIG = "FREE_DELIVERY_BILL_VALUE"
+
+DEFAULTS = {POINTS_PERCENTAGE_CONFIG: 5, FREE_DELIVERY_CONFIG: 1000}
 
 
 def set_config(global_config_create: GlobalConfigCreate) -> GlobalConfigSchema:
@@ -36,4 +39,6 @@ def get_config(organization_id: UUID, config_type: str) -> GlobalConfigSchema | 
         .filter(GlobalConfig.org_id == organization_id, GlobalConfig.config_type == config_type)
         .one_or_none()
     )
+    if matching_config is None and config_type in DEFAULTS:
+        return GlobalConfigSchema(organization_id=organization_id, config_type=config_type, value=DEFAULTS[config_type])
     return GlobalConfigSchema.from_orm(matching_config) if matching_config else None
