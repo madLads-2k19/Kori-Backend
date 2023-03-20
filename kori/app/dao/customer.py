@@ -30,7 +30,6 @@ def create(customer_data: CustomerCreate) -> CustomerSchema:
 def get_customer_by_id(customer_id: UUID) -> CustomerSchema | None:
     session = db_connector.get_session()
     customer = session.query(Customer).filter(Customer.id == customer_id).one_or_none()
-    session.close()
     return CustomerSchema.from_orm(customer) if customer else None
 
 
@@ -43,14 +42,12 @@ def get_customers_in_org(
         customers = customers.filter(Customer.phone_number.like(f"%{phone_number}%"))
     if customer_name:
         customers = customers.filter(Customer.name.like(f"%{customer_name}%"))
-    session.close()
     return [CustomerSchema.from_orm(customer) for customer in customers]
 
 
 def get_customer_by_number(phone_number: str) -> CustomerSchema | None:
     session = db_connector.get_session()
     customer = session.query(Customer).filter(Customer.phone_number == phone_number).one_or_none()
-    session.close()
     return CustomerSchema.from_orm(customer) if customer else None
 
 
@@ -64,7 +61,6 @@ def update(customer_id: UUID, customer_data: CustomerUpdate) -> CustomerSchema |
     except IntegrityError:
         raise DuplicateRecordException(message="Account with similar phone number already exists.")
 
-    session.close()
     return get_customer_by_id(customer_id)
 
 
@@ -72,4 +68,3 @@ def delete(customer_id: UUID) -> None:
     session = db_connector.get_session()
     session.query(Customer).filter(Customer.id == customer_id).delete()
     session.commit()
-    session.close()

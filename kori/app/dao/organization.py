@@ -19,7 +19,6 @@ def create(organization_create: OrganizationCreate) -> OrganizationSchema:
     session.add(new_org_db)
     session.commit()
 
-    session.close()
     return OrganizationSchema.from_orm(new_org_db)
 
 
@@ -30,14 +29,12 @@ def get_organization_by_id(organization_id: UUID) -> OrganizationSchema:
     if organization is None:
         raise NotFoundException()
 
-    session.close()
     return OrganizationSchema.from_orm(organization)
 
 
 def get_all_organizations() -> list[OrganizationSchema]:
     session = db_connector.get_session()
     organizations = list(session.query(Organization))
-    session.close()
     return [OrganizationSchema.from_orm(org) for org in organizations]
 
 
@@ -51,7 +48,6 @@ def update(organization_id: UUID, organization_update: OrganizationUpdate) -> Or
     if updated_count == 0:
         raise NotFoundException(message="No records matched for update")
 
-    session.close()
     return get_organization_by_id(organization_id)
 
 
@@ -59,7 +55,6 @@ def delete(organization_id: UUID) -> None:
     session = db_connector.get_session()
     deleted_count = session.query(Organization).filter(Organization.id == organization_id).delete()
     session.commit()
-    session.close()
 
     if deleted_count == 0:
         raise NotFoundException(message="No records matched for delete")
