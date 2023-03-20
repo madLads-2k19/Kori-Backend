@@ -24,15 +24,12 @@ def create(user_data: UserCreate) -> UserSchema:
     except IntegrityError:
         raise DuplicateRecordException(message="Similar user already exists")
 
-    session.close()
     return UserSchema.from_orm(new_user_db)
 
 
 def get_user_by_id(user_id: UUID) -> UserSchema | None:
     session = db_connector.get_session()
     fetched_user = session.query(User).filter(User.id == user_id).one_or_none()
-    session.close()
-
     if fetched_user:
         return UserSchema.from_orm(fetched_user)
 
@@ -40,8 +37,6 @@ def get_user_by_id(user_id: UUID) -> UserSchema | None:
 def get_user_by_email(email: EmailStr) -> UserSchema | None:
     session = db_connector.get_session()
     fetched_user = session.query(User).filter(User.email == email).one_or_none()
-    session.close()
-
     if fetched_user:
         return UserSchema.from_orm(fetched_user)
 
@@ -56,7 +51,6 @@ def update(user_id: UUID, user_data: UserUpdate) -> UserSchema | None:
     except IntegrityError:
         raise DuplicateRecordException(message="Similar user already exists")
 
-    session.close()
     return get_user_by_id(user_id)
 
 
@@ -64,4 +58,3 @@ def delete(user_id: UUID) -> None:
     session = db_connector.get_session()
     session.query(User).filter(User.id == user_id).delete()
     session.commit()
-    session.close()
