@@ -49,8 +49,6 @@ def login(login_request: UserLoginRequest) -> AuthResponse:
 
 @user_router.get("/{org_id}", response_model=UserSchema)
 def get_user(org_id: UUID, user_id: UUID, user: UserSchema = Depends(auth_service.verify_access)) -> UserSchema:
-    assert user_id == user.id
-    assert org_id == user.org_id
     return user_service.get_user_by_id(user_id)
 
 
@@ -61,14 +59,10 @@ def update_user(
     update_request: UserUpdateRequest,
     user: UserSchema = Depends(auth_service.verify_access),
 ) -> UserSchema:
-    assert user_id == user.id
-    assert org_id == user.org_id
     return user_service.update(user_id, update_request)
 
 
 @user_router.delete("/{org_id}")
 def delete_user(org_id: UUID, user_id: UUID, user: UserSchema = Depends(auth_service.verify_access)):
-    assert user_id == user.id
-    assert org_id == user.org_id
     user_service.delete(user_id)
     return "Deleted"
