@@ -11,12 +11,22 @@ from kori.app.schemas.customer_bill import (
     CustomerBillSchema,
     CustomerBillWithProducts,
 )
+from kori.app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
+from kori.app.dao.customer import get_customer_by_id
+from kori.app.schemas.customer_bill import CustomerBillCreate, CustomerBillDbCreate, CustomerBillSchema
 from kori.app.schemas.product import ProductSchema
 from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilledWithProduct
 from kori.app.services.product import get_product
 
 
 def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate) -> CustomerBillSchema:
+    customer = get_customer_by_id(bill_request.customer_id)
+    if not customer.is_member and bill_request.discount_price > 0:
+        raise BadRequestException(message="Discount applicable to members only")
+
+    if bill_request.discount_price > customer.membership_points:
+        raise BadRequestException(message="Insufficient membership points for discount")
+
     # get the latest versions of each product
     latest_products: list[ProductSchema] = [get_product(product.product_id) for product in bill_request.products_billed]
     product_billed_db_create_list: list[ProductBilledDbCreate] = []
@@ -32,6 +42,11 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
 
     products_total = sum(product.total_cost for product in product_billed_db_create_list)
 
+    free_delivery_config = global_config_dao.get_config(organization_id, global_config_dao.FREE_DELIVERY_CONFIG)
+
+    if products_total > float(free_delivery_config.value):
+        raise BadRequestException(message="Delivery charge not applicable")
+
     net_price = products_total - bill_request.discount_price + bill_request.delivery_charge
     billed_at = datetime.now()
 
@@ -42,7 +57,7 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
         billed_at=billed_at,
     )
 
-    org_points_config = global_config_dao.get_config(organization_id, global_config_dao.POINTS_PERCENTAGE_CONFIG_TYPE)
+    org_points_config = global_config_dao.get_config(organization_id, global_config_dao.POINTS_PERCENTAGE_CONFIG)
     points = (products_total * float(org_points_config.value)) / 100.0
 
     return customer_bill_dao.create_customer_bill(customer_bill_db_create, product_billed_db_create_list, points)
