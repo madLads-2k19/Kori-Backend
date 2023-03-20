@@ -16,6 +16,7 @@ from kori.app.models import (
     WarehouseProduct,
 )
 from kori.app.models.organization import Organization
+from kori.app.schemas.user import PermissionLevel
 
 if __name__ == "__main__":
     config = Settings()
@@ -45,7 +46,7 @@ if __name__ == "__main__":
         org_id=org_id,
         name="Test User",
         email="test@email.com",
-        permission_level="Test",
+        permission_level=PermissionLevel.user,
         pass_hash=b"Test",
     )
     session.add(user)
