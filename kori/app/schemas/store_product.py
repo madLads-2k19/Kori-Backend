@@ -21,6 +21,7 @@ class StoreProductUpdate(StoreProductBase):
 
 class StoreProductSchema(StoreProductBase):
     stock_locked: float
+    reorder_placed: bool
 
     class Config:
         orm_mode = True
