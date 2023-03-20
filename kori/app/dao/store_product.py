@@ -87,11 +87,24 @@ def update(store_id: UUID, product_id: UUID, store_product_update: StoreProductU
         .update(update_data)
     )
     session.commit()
-
     if updated_count == 0:
         raise NotFoundException(message="No records matched for update")
 
-    return get_store_product(store_id, product_id)
+    updated_store_product = (
+        session.query(StoreProduct)
+        .filter(StoreProduct.store_id == store_id, StoreProduct.product_id == product_id)
+        .one_or_none()
+    )
+
+    if (
+        updated_store_product.stock_available > updated_store_product.product.reorder_level
+        and updated_store_product.reorder_placed
+    ):
+        updated_store_product.reorder_placed = False
+
+    session.commit()
+
+    return StoreProductSchema.from_orm(updated_store_product)
 
 
 def lock_store_product(store_id: UUID, product_id: UUID, lock_quantity: int) -> StoreProductSchema:

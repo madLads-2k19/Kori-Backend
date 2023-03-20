@@ -5,10 +5,12 @@ from kori.app.core.config import Settings
 from kori.app.core.exceptions import StockLevelException
 from kori.app.db.connection import DbConnector
 from kori.app.models import Customer, CustomerBill, ProductBilled, StoreProduct
+from kori.app.models.reorder import Reorder
 from kori.app.schemas.customer_bill import CustomerBillDbCreate, CustomerBillSchema
 from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilledSchema
 
 settings = Settings()
+REORDER_FACTOR = 2
 
 db_connector = DbConnector(settings.DATABASE_URI)
 
@@ -39,6 +41,21 @@ def create_customer_bill(
             if billed_quantity_decimal > store_product_db.stock_available:
                 raise StockLevelException()
             store_product_db.stock_available -= billed_quantity_decimal
+
+            if (
+                store_product_db.stock_available <= store_product_db.product.reorder_level
+                and not store_product_db.reorder_placed
+            ):
+                reorder_entry = Reorder(
+                    org_id=customer_bill_db_create.org_id,
+                    store_id=customer_bill_db_create.store_id,
+                    product_id=product_billed_create.product_id,
+                    reorder_quantity=(REORDER_FACTOR * store_product_db.product.reorder_level),
+                    reorder_time=customer_bill_db_create.billed_at,
+                    supplier_paid=False,
+                )
+                session.add(reorder_entry)
+                store_product_db.reorder_placed = True
 
         # Increment customer membership points
         customer_db: Customer = session.query(Customer).get(customer_bill_db_create.customer_id)
