@@ -35,6 +35,7 @@ def create(store_product_create: StoreProductCreate) -> StoreProductSchema:
     except IntegrityError:
         raise DuplicateRecordException(message="Store Product mapping already exists")
 
+    session.close()
     return StoreProductSchema.from_orm(new_store_product_db)
 
 
@@ -44,6 +45,7 @@ def get_store_product(store_id: UUID, product_id: UUID) -> StoreProductSchema | 
         session.query(StoreProduct).filter(StoreProduct.store_id == store_id, StoreProduct.product_id == product_id)
     )
 
+    session.close()
     return StoreProductSchema.from_orm(store_products[0]) if len(store_products) > 0 else None
 
 
@@ -54,6 +56,7 @@ def get_products_by_stores(store_ids: list[UUID]) -> list[AggregatedProduct]:
         .filter(StoreProduct.store_id.in_(store_ids))
         .group_by(StoreProduct.product_id)
     )
+    session.close()
     return [AggregatedProduct(product_id=entry[0], total_stock=entry[1]) for entry in result]
 
 
@@ -65,6 +68,7 @@ def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductWithProd
 
     store_product_schema_list = [StoreProductSchema.from_orm(store_product) for store_product in store_products]
 
+    session.close()
     return [
         StoreProductWithProduct(**store_product.dict(), product=get_product(store_product.product_id))
         for store_product in store_product_schema_list
@@ -74,6 +78,7 @@ def get_all_store_products_of_store(store_id: UUID) -> list[StoreProductWithProd
 def get_all_store_products_of_products(product_id: UUID) -> list[StoreProductSchema]:
     session = db_connector.get_session()
     store_products = list(session.query(StoreProduct).filter(StoreProduct.product_id == product_id))
+    session.close()
     return [StoreProductSchema.from_orm(store_product) for store_product in store_products]
 
 
@@ -103,6 +108,7 @@ def update(store_id: UUID, product_id: UUID, store_product_update: StoreProductU
         updated_store_product.reorder_placed = False
 
     session.commit()
+    session.close()
 
     return StoreProductSchema.from_orm(updated_store_product)
 
@@ -124,6 +130,7 @@ def lock_store_product(store_id: UUID, product_id: UUID, lock_quantity: int) -> 
 
     store_product_record.stock_locked = new_total_locked_qty
     session.commit()
+    session.close()
 
     return get_store_product(store_id, product_id)
 
@@ -136,6 +143,7 @@ def delete(store_id: UUID, product_id: UUID) -> None:
         .delete()
     )
     session.commit()
+    session.close()
 
     if deleted_count == 0:
         raise NotFoundException(message="No records matched for delete")

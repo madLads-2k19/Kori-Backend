@@ -64,10 +64,12 @@ def create_customer_bill(
 
         transaction.commit()
 
+    session.close()
     return CustomerBillSchema.from_orm(customer_bill_db)
 
 
 def get_customer_bill(customer_bill_id: UUID) -> CustomerBillSchema | None:
     session = db_connector.get_session()
     customer_bill = session.query(CustomerBill).get(customer_bill_id)
+    session.close()
     return CustomerBillSchema.from_orm(customer_bill) if customer_bill else None

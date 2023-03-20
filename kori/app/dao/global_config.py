@@ -29,6 +29,7 @@ def set_config(global_config_create: GlobalConfigCreate) -> GlobalConfigSchema:
     except IntegrityError:
         raise DuplicateRecordException(message="Global config entry with same key exists")
 
+    session.close()
     return GlobalConfigSchema.from_orm(new_config_db)
 
 
@@ -43,4 +44,6 @@ def get_config(organization_id: UUID, config_type: str) -> GlobalConfigSchema | 
         return GlobalConfigSchema(
             id=UUID("0" * 32), org_id=organization_id, config_type=config_type, value=DEFAULTS[config_type]
         )
+
+    session.close()
     return GlobalConfigSchema.from_orm(matching_config) if matching_config else None
