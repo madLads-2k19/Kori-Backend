@@ -40,5 +40,7 @@ def get_config(organization_id: UUID, config_type: str) -> GlobalConfigSchema | 
         .one_or_none()
     )
     if matching_config is None and config_type in DEFAULTS:
-        return GlobalConfigSchema(organization_id=organization_id, config_type=config_type, value=DEFAULTS[config_type])
+        return GlobalConfigSchema(
+            id=UUID("0" * 32), org_id=organization_id, config_type=config_type, value=DEFAULTS[config_type]
+        )
     return GlobalConfigSchema.from_orm(matching_config) if matching_config else None

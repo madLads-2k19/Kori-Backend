@@ -44,7 +44,7 @@ def create_customer_bill(organization_id: UUID, bill_request: CustomerBillCreate
 
     free_delivery_config = global_config_dao.get_config(organization_id, global_config_dao.FREE_DELIVERY_CONFIG)
 
-    if products_total > float(free_delivery_config.value):
+    if products_total > float(free_delivery_config.value) and bill_request.delivery_charge > 0:
         raise BadRequestException(message="Delivery charge not applicable")
 
     net_price = products_total - bill_request.discount_price + bill_request.delivery_charge
