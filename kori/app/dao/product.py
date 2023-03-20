@@ -43,6 +43,7 @@ def create(product_data: ProductCreate) -> ProductSchema:
         except Exception:
             transaction.rollback()
 
+    session.close()
     return ProductSchema(
         product_id=new_product_db.id,
         reorder_level=new_product_db.reorder_level,
@@ -83,6 +84,7 @@ def get_products_by_organization(org_id: UUID) -> list[ProductSchema]:
             )
         )
 
+    session.close()
     return response_product_list
 
 
@@ -112,6 +114,7 @@ def get_product(product_id: UUID, timestamp: Optional[datetime] = None) -> Produ
     except NoResultFound as e:
         raise NotFoundException(message="Product Details not found")
 
+    session.close()
     return ProductSchema(
         product_id=product.id,
         reorder_level=product.reorder_level,
@@ -148,6 +151,7 @@ def get_products_by_name(product_ids: list[UUID], product_name: str | None = Non
                 version_id=product_version.version_id,
             )
         )
+    session.close()
     return products
 
 
@@ -159,6 +163,7 @@ def get_product_by_version_id(product_id: UUID, version_id: int) -> ProductSchem
         .one_or_none()
     )
     product = product_version.product
+    session.close()
     return ProductSchema(
         reorder_level=product.reorder_level,
         name=product_version.name,
@@ -214,6 +219,7 @@ def update(product_id: UUID, product_data: ProductUpdate) -> ProductSchema:
 
         version_id = new_product_version_db.version_id
 
+    session.close()
     return ProductSchema(
         product_id=product_id,
         reorder_level=existing_product.reorder_level,
@@ -233,3 +239,4 @@ def delete(product_id: UUID) -> None:
 
     existing_product.is_deleted = True
     session.commit()
+    session.close()

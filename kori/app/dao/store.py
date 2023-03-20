@@ -19,6 +19,7 @@ def create(store_create: StoreCreate) -> StoreSchema:
     session.add(new_store_db)
     session.commit()
 
+    session.close()
     return StoreSchema.from_orm(new_store_db)
 
 
@@ -29,12 +30,14 @@ def get_store_by_id(organization_id: UUID, store_id: UUID) -> StoreSchema | None
     if not store:
         raise NotFoundException()
 
+    session.close()
     return StoreSchema.from_orm(store)
 
 
 def get_stores_of_organization(organization_id) -> list[StoreSchema]:
     session = db_connector.get_session()
     stores = session.query(Store).filter(Store.org_id == organization_id)
+    session.close()
     return [StoreSchema.from_orm(store) for store in stores]
 
 
@@ -50,6 +53,7 @@ def update(organization_id: UUID, store_id: UUID, store_update: StoreUpdate) -> 
     if updated_count == 0:
         raise NotFoundException(message="No records matched for update")
 
+    session.close()
     return get_store_by_id(organization_id, store_id)
 
 
@@ -57,6 +61,7 @@ def delete(organization_id: UUID, store_id: UUID) -> None:
     session = db_connector.get_session()
     deleted_count = session.query(Store).filter(Organization.id == organization_id, Store.id == store_id).delete()
     session.commit()
+    session.close()
 
     if deleted_count == 0:
         raise NotFoundException(message="No records matched for delete")
