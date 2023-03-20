@@ -4,16 +4,14 @@ from uuid import UUID
 import kori.app.dao.customer_bill as customer_bill_dao
 import kori.app.dao.global_config as global_config_dao
 import kori.app.dao.product as product_dao
-from kori.app.core.exceptions import ForbiddenException, NotFoundException
+from kori.app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
+from kori.app.dao.customer import get_customer_by_id
 from kori.app.schemas.customer_bill import (
     CustomerBillCreate,
     CustomerBillDbCreate,
     CustomerBillSchema,
     CustomerBillWithProducts,
 )
-from kori.app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
-from kori.app.dao.customer import get_customer_by_id
-from kori.app.schemas.customer_bill import CustomerBillCreate, CustomerBillDbCreate, CustomerBillSchema
 from kori.app.schemas.product import ProductSchema
 from kori.app.schemas.product_billed import ProductBilledDbCreate, ProductBilledWithProduct
 from kori.app.services.product import get_product
